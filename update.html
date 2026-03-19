@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Metro Iritty Updates</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root { --primary: #2563eb; --surface: #f8fafc; --card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--text-main); display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
+        .container { width: 100%; max-width: 450px; padding: 12px; display: flex; flex-direction: column; height: 100%; }
+        
+        #login-screen { display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; animation: fadeUp 0.5s ease; padding-bottom: 10vh; }
+        .app-logo { font-size: 48px; color: var(--primary); margin-bottom: 8px; background: #eff6ff; padding: 16px; border-radius: 24px; display: inline-block; }
+        .app-title { font-weight: 800; font-size: 22px; margin: 0 0 4px 0; }
+        .app-subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+        
+        .card { background: var(--card); padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        select, input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid transparent; background: #f1f5f9; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.3s; }
+        select:focus, input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
+        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 4px; flex-shrink: 0; }
+        .btn:active { transform: scale(0.98); }
+
+        #app-screen { display: none; flex-direction: column; height: 100%; gap: 8px; animation: fadeUp 0.4s ease; }
+        header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); flex-shrink: 0; }
+        .role-badge { display: flex; flex-direction: column; }
+        .role-badge span { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .role-badge strong { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: capitalize; margin-top: 2px;}
+        
+        .date-box { background: var(--card); padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); flex-shrink: 0; }
+        .date-box label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .date-box input { border: none; font-size: 15px; color: var(--text-main); background: transparent; padding: 0; margin: 0; width: auto; font-weight: 800; text-align: right; }
+        
+        .form-card { background: white; padding: 16px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex: 1; display: flex; flex-direction: column; min-height: 0; }
+        h3 { margin: 0 0 12px 0; font-weight: 800; font-size: 15px; color: var(--text-main); flex-shrink: 0; }
+        
+        #form-content { flex: 1; overflow-y: auto; padding-right: 4px; }
+        #form-content::-webkit-scrollbar { width: 4px; }
+        #form-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        .input-group { margin-bottom: 10px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase; }
+        .input-group input { margin-bottom: 0; }
+        
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <!-- PWA Setup for Updates -->
+    <link rel="manifest" href="manifest-update.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="icons/update-192.png">
+</head>
+<body>
+<div class="container">
+    <div id="login-screen">
+        <div style="margin: 0 auto;">
+            <i class="material-icons-round app-logo">storefront</i>
+            <h1 class="app-title">Metro Iritty</h1>
+            <p class="app-subtitle">Secure Staff Portal</p>
+        </div>
+        <div class="card">
+            <select id="user-role">
+                <option value="purchase">Purchase Department</option>
+                <option value="sales">Sales Department</option>
+                <option value="accounts">Accounts Department</option>
+                <option value="dataentry">Data Entry Department</option>
+            </select>
+            <input type="password" id="user-pass" placeholder="Enter PIN / Password">
+            <button class="btn" id="login-btn">Sign In</button>
+        </div>
+    </div>
+
+    <div id="app-screen">
+        <header>
+            <div class="role-badge"><span>Active Session</span><strong id="display-role">Role</strong></div>
+            <button id="logout-btn" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 10px; border-radius:10px; font-weight:700; display:flex; align-items:center;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
+        </header>
+        <div class="date-box">
+            <label>Reporting Date</label>
+            <input type="date" id="entry_date">
+        </div>
+        <div class="form-card">
+            <div id="form-content"></div>
+            <button class="btn" id="submit-btn" style="margin-top: 12px;">Submit Data</button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
+  authDomain: "metro-iritty-app.firebaseapp.com",
+  projectId: "metro-iritty-app",
+  storageBucket: "metro-iritty-app.firebasestorage.app",
+  messagingSenderId: "377500415970",
+  appId: "1:377500415970:web:ccfcc8f6c199477ed2abbb"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const ROLES = {
+        purchase: { pass: "pur123", label: "YESTERDAY'S PURCHASE", default: 'yest' },
+        sales: { pass: "sale456", label: "YESTERDAY'S SALES", default: 'yest' },
+        accounts: { pass: "acc789", label: "TODAY'S ACCOUNTS", default: 'today' },
+        dataentry: { pass: "data000", label: "TODAY'S DATA ENTRY", default: 'today' }
+    };
+
+    let currentUser = localStorage.getItem('sm_session');
+
+    window.onload = () => { if(currentUser) loginUser(currentUser); };
+
+    document.getElementById('login-btn').addEventListener('click', () => {
+        const role = document.getElementById('user-role').value;
+        if(ROLES[role].pass === document.getElementById('user-pass').value) {
+            localStorage.setItem('sm_session', role);
+            loginUser(role);
+        } else { alert("Incorrect Password"); }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('sm_session'); location.reload();
+    });
+
+    function loginUser(role) {
+        currentUser = role;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'flex';
+        document.getElementById('display-role').innerText = role;
+        
+        const dateInput = document.getElementById('entry_date');
+        const d = new Date();
+        if(ROLES[role].default === 'yest') d.setDate(d.getDate() - 1);
+        
+        // Format YYYY-MM-DD
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+        
+        renderForm(role);
+    }
+
+    function renderForm(role) {
+        let html = `<h3>${ROLES[role].label}</h3>`;
+        if(role === 'purchase') {
+            ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
+                html += `<div class="input-group"><label>${cat}</label><input type="number" id="p_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
+            });
+        } else if(role === 'sales') {
+            ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
+                html += `<div class="input-group"><label>${cat}</label><input type="number" id="s_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
+            });
+            html += `<div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#10b981">Overall Profit</label><input type="number" id="s_profit" placeholder="₹0"></div>`;
+            html += `<div class="input-group"><label style="color:#ef4444">Total Voucher</label><input type="number" id="s_voucher" placeholder="₹0"></div>`;
+        } else if(role === 'accounts') {
+            html += `<div class="input-group"><label>Bank Balance</label><input type="number" id="acc_bal" placeholder="₹0"></div>
+                     <div class="input-group"><label>Issued Amount</label><input type="number" id="acc_iss" placeholder="₹0"></div>`;
+        } else if(role === 'dataentry') {
+            html += `<div class="input-group"><label>Bills Entered</label><input type="number" id="de_ent" placeholder="0"></div>
+                     <div class="input-group"><label>Bills Pending</label><input type="number" id="de_pen" placeholder="0"></div>
+                     <div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#f59e0b">F&V Dump Amount</label><input type="number" id="de_fvdump" placeholder="₹0"></div>
+                     <div class="input-group"><label style="color:var(--primary)">Today's Total Purchase</label><input type="number" id="de_total_pur" placeholder="₹0"></div>`;
+        }
+        document.getElementById('form-content').innerHTML = html;
+    }
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+        const dateStr = document.getElementById('entry_date').value;
+        if (!dateStr) return alert("Select Date");
+        
+        const btn = document.getElementById('submit-btn');
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
+        let payload = { date: dateStr }; // Store date field for querying
+        
+        if(currentUser === 'purchase') {
+            payload.purchase = { 
+                food: Number(document.getElementById('p_fooditems').value), 
+                nonfood: Number(document.getElementById('p_nonfood').value), 
+                promoter: Number(document.getElementById('p_promoters').value), 
+                hwp: Number(document.getElementById('p_hwp').value) 
+            };
+        } else if(currentUser === 'sales') {
+            payload.sales = { 
+                food: Number(document.getElementById('s_fooditems').value), 
+                nonfood: Number(document.getElementById('s_nonfood').value), 
+                promoter: Number(document.getElementById('s_promoters').value), 
+                hwp: Number(document.getElementById('s_hwp').value),
+                profit: Number(document.getElementById('s_profit').value),
+                voucher: Number(document.getElementById('s_voucher').value)
+            };
+        } else if(currentUser === 'accounts') {
+            payload.accounts = { 
+                balance: Number(document.getElementById('acc_bal').value), 
+                issued: Number(document.getElementById('acc_iss').value) 
+            };
+        } else if(currentUser === 'dataentry') {
+            payload.billing = { 
+                entered: Number(document.getElementById('de_ent').value), 
+                pending: Number(document.getElementById('de_pen').value), 
+                fvDump: Number(document.getElementById('de_fvdump').value),
+                totalPur: Number(document.getElementById('de_total_pur').value) 
+            };
+        }
+
+        try {
+            // Merge true prevents overwriting other departments' entries for the same day
+            await setDoc(doc(db, "daily_records", dateStr), payload, { merge: true });
+            alert('Data Successfully Saved to Cloud!');
+        } catch (e) {
+            console.error(e);
+            alert("Error saving data. Check connection.");
+        } finally {
+            btn.innerText = "Submit Data";
+            btn.disabled = false;
+        }
+    });
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+        });
+    }
+</script>
+</body>
+</html>

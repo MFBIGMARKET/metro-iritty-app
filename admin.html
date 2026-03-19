@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Metro Iritty Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root { 
+            --g-blue: #2563eb; --g-red: #ef4444; --g-green: #10b981; --g-yellow: #f59e0b; 
+            --bg: #f8fafc; --card: #ffffff; --text-dark: #0f172a; --text-muted: #64748b;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        
+        body, html { 
+            margin: 0; padding: 0; height: 100%; height: 100dvh; width: 100vw; 
+            font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); overflow: hidden; 
+        }
+
+        .dashboard { display: flex; flex-direction: column; height: 100%; padding: 10px; gap: 10px; }
+
+        header { 
+            height: 52px; background: var(--card); padding: 0 16px; border-radius: 16px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; flex-shrink: 0;
+        }
+        header h1 { font-size: 15px; margin: 0; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
+        header span { font-weight: 500; color: var(--text-muted); }
+        header input { border: none; color: var(--g-blue); font-family: inherit; font-weight: 700; font-size: 13px; outline: none; background: transparent; padding: 0; }
+
+        /* STRICT 2x4 GRID - Forces 8 equal tiles */
+        .cat-grid { 
+            flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); 
+            gap: 8px; min-height: 0; padding-bottom: 5px;
+        }
+        
+        .cat-card { 
+            background: var(--card); border-radius: 20px; padding: 12px; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; position: relative;
+            overflow: hidden;
+        }
+        
+        /* Unified Header Layout for all tiles */
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .cat-title-group { display: flex; align-items: center; gap: 6px; }
+        .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Premium Month Badge */
+        .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
+        .month-badge.green { background: #dcfce7; color: #166534; }
+        .month-badge.red { background: #fee2e2; color: #991b1b; }
+        
+        .cat-diff { font-size: 18px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
+        
+        /* Progress Bar */
+        .progress-container { height: 4px; background: #f1f5f9; border-radius: 2px; margin: 6px 0; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.8s ease; }
+        
+        /* Stats Row */
+        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+        .stat-item { display: flex; flex-direction: column; }
+        .sp-char { font-size: 9px; font-weight: 800; color: #000; letter-spacing: 0.5px; margin-bottom: 1px; }
+        .sp-val { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+
+        /* Specific Tile Customizations */
+        .icon-small { font-size: 18px; opacity: 0.8; }
+        .bank-theme { background: #ffffff; border-color: #e0e7ff; }
+        .ops-theme { background: #0f172a; border-color: #1e293b; color: white; }
+        .ops-theme .cat-label { color: #94a3b8; }
+        .ops-theme .sp-val { color: #f8fafc; }
+        .ops-theme .sp-char { color: #cbd5e1; }
+    </style>
+    <!-- PWA Setup for Admin -->
+    <link rel="manifest" href="manifest-admin.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="icons/admin-192.png">
+</head>
+<body>
+
+<div class="dashboard">
+    <header>
+        <h1>Metro Iritty <span id="sync-status">Admin</span></h1>
+        <input type="date" id="admin_date">
+    </header>
+
+    <div class="cat-grid">
+        <!-- 1. FOOD -->
+        <div class="cat-card">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge">MON</span></div>
+            </div>
+            <div class="cat-diff" id="f-diff">₹0</div>
+            <div class="progress-container"><div id="f-bar" class="progress-bar"></div></div>
+            <div class="cat-stats">
+                <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="f-s">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="f-p">0</span></div>
+            </div>
+        </div>
+        
+        <!-- 2. NON-FOOD -->
+        <div class="cat-card">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge">MON</span></div>
+            </div>
+            <div class="cat-diff" id="nf-diff">₹0</div>
+            <div class="progress-container"><div id="nf-bar" class="progress-bar"></div></div>
+            <div class="cat-stats">
+                <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="nf-s">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="nf-p">0</span></div>
+            </div>
+        </div>
+
+        <!-- 3. PROMOTERS -->
+        <div class="cat-card">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge">MON</span></div>
+            </div>
+            <div class="cat-diff" id="pr-diff">₹0</div>
+            <div class="progress-container"><div id="pr-bar" class="progress-bar"></div></div>
+            <div class="cat-stats">
+                <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="pr-s">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="pr-p">0</span></div>
+            </div>
+        </div>
+
+        <!-- 4. HWP -->
+        <div class="cat-card">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge">MON</span></div>
+            </div>
+            <div class="cat-diff" id="hwp-diff">₹0</div>
+            <div class="progress-container"><div id="hwp-bar" class="progress-bar"></div></div>
+            <div class="cat-stats">
+                <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="hwp-s">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="hwp-p">0</span></div>
+            </div>
+        </div>
+
+        <!-- 5. PROFIT VS VOUCHER -->
+        <div class="cat-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label" style="color:#15803d">NET PROFIT</span><span class="month-badge green">MON</span></div>
+            </div>
+            <div class="cat-diff" id="pv-diff">₹0</div>
+            <div class="progress-container"><div id="pv-bar" class="progress-bar"></div></div>
+            <div class="cat-stats">
+                <div class="stat-item"><span class="sp-char" style="color:#166534">PROFIT</span><span class="sp-val" id="pv-p" style="color:#15803d">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char" style="color:#166534">VOUCHER</span><span class="sp-val" id="pv-v" style="color:#15803d">0</span></div>
+            </div>
+        </div>
+
+        <!-- 6. F&V DUMP -->
+        <div class="cat-card" style="background: #fef2f2; border-color: #fecaca;">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label" style="color:#b91c1c">F&V DUMP</span><span class="month-badge red">MON</span></div>
+            </div>
+            <div class="cat-diff" id="fv-cumul" style="color:#ef4444">₹0</div>
+            <div class="cat-stats" style="border-top: 1px solid #fca5a5; padding-top: 4px; margin-top: auto;">
+                <div class="stat-item"><span class="sp-char" style="color:#991b1b">YEST. DUMP</span><span class="sp-val" id="fv-yest" style="color:#b91c1c; font-size:14px; font-weight:800;">₹0</span></div>
+            </div>
+        </div>
+
+        <!-- 7. BANK SQUARE -->
+        <div class="cat-card bank-theme">
+            <div class="card-header">
+                <div class="cat-label">BANK TODAY</div>
+                <i class="material-icons-round icon-small" style="color:var(--g-blue)">account_balance</i>
+            </div>
+            <div class="cat-diff" id="b-bal" style="color:var(--g-blue); font-size:22px;">₹0</div>
+            <div class="cat-stats" style="border-top: 1px solid #e0e7ff; padding-top: 4px;">
+                <div class="stat-item"><span class="sp-char">ISSUED TODAY</span><span class="sp-val" id="b-iss" style="color:var(--text-dark); font-size:14px; font-weight:800;">₹0</span></div>
+            </div>
+        </div>
+
+        <!-- 8. OPS SQUARE -->
+        <div class="cat-card ops-theme">
+            <div class="card-header">
+                <div class="cat-label">TODAY'S PURCH</div>
+                <i class="material-icons-round icon-small" style="color:var(--g-yellow)">snippet_folder</i>
+            </div>
+            <div class="cat-diff" id="o-tpur" style="color:var(--g-yellow); font-size:22px;">₹0</div>
+            <div class="cat-stats" style="border-top: 1px solid #334155; padding-top: 4px;">
+                <div class="stat-item"><span class="sp-char">ENT</span><span class="sp-val" id="o-ent" style="color:var(--g-green); font-size:14px; font-weight:800;">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">PEN</span><span class="sp-val" id="o-pen" style="color:var(--g-red); font-size:14px; font-weight:800;">0</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
+  authDomain: "metro-iritty-app.firebaseapp.com",
+  projectId: "metro-iritty-app",
+  storageBucket: "metro-iritty-app.firebasestorage.app",
+  messagingSenderId: "377500415970",
+  appId: "1:377500415970:web:ccfcc8f6c199477ed2abbb"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const datePicker = document.getElementById('admin_date');
+    const d = new Date();
+    datePicker.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    
+    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+    datePicker.addEventListener('change', fetchAndRender);
+
+    async function fetchAndRender() {
+        const statusEl = document.getElementById('sync-status');
+        statusEl.innerText = "Syncing...";
+        statusEl.style.color = "var(--g-blue)";
+
+        const selectedStr = datePicker.value;
+        const selectedDate = new Date(selectedStr);
+        
+        // Update all month badges to current month (e.g., "JUN")
+        const currentMonthTag = monthNames[selectedDate.getMonth()];
+        document.querySelectorAll('.month-badge').forEach(badge => { badge.innerText = currentMonthTag; });
+        
+        const monthStartStr = selectedStr.substring(0, 8) + '01';
+        
+        const yest = new Date(selectedDate);
+        yest.setDate(yest.getDate() - 1);
+        const yesterdayStr = `${yest.getFullYear()}-${String(yest.getMonth() + 1).padStart(2, '0')}-${String(yest.getDate()).padStart(2, '0')}`;
+
+        try {
+            const q = query(collection(db, "daily_records"), where("date", ">=", monthStartStr), where("date", "<=", selectedStr));
+            const snapshot = await getDocs(q);
+
+            let sum = { f_s:0, f_p:0, nf_s:0, nf_p:0, pr_s:0, pr_p:0, hwp_s:0, hwp_p:0, profit:0, voucher:0, fv_dump:0 };
+            let dToday = {}, dYest = {};
+
+            snapshot.forEach(doc => {
+                let data = doc.data();
+                sum.f_s += Number(data.sales?.food || 0); sum.f_p += Number(data.purchase?.food || 0);
+                sum.nf_s += Number(data.sales?.nonfood || 0); sum.nf_p += Number(data.purchase?.nonfood || 0);
+                sum.pr_s += Number(data.sales?.promoter || 0); sum.pr_p += Number(data.purchase?.promoter || 0);
+                sum.hwp_s += Number(data.sales?.hwp || 0); sum.hwp_p += Number(data.purchase?.hwp || 0);
+                sum.profit += Number(data.sales?.profit || 0);
+                sum.voucher += Number(data.sales?.voucher || 0);
+                sum.fv_dump += Number(data.billing?.fvDump || 0);
+
+                if(data.date === selectedStr) dToday = data;
+                if(data.date === yesterdayStr) dYest = data;
+            });
+
+            updateTile('f', sum.f_s, sum.f_p);
+            updateTile('nf', sum.nf_s, sum.nf_p);
+            updateTile('pr', sum.pr_s, sum.pr_p);
+            updateTile('hwp', sum.hwp_s, sum.hwp_p);
+
+            document.getElementById(`pv-p`).innerText = formatAmt(sum.profit);
+            document.getElementById(`pv-v`).innerText = formatAmt(sum.voucher);
+            const pvDiff = sum.profit - sum.voucher;
+            const pvEl = document.getElementById(`pv-diff`);
+            pvEl.innerText = (pvDiff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(pvDiff));
+            pvEl.style.color = pvDiff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+            const pvBar = document.getElementById(`pv-bar`);
+            let pvPct = sum.voucher > 0 ? (sum.profit / sum.voucher) * 100 : (sum.profit > 0 ? 100 : 0);
+            pvBar.style.width = Math.min(pvPct, 100) + '%';
+            pvBar.style.backgroundColor = pvDiff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+
+            document.getElementById('fv-cumul').innerText = '₹' + formatAmt(sum.fv_dump);
+            document.getElementById('fv-yest').innerText = '₹' + formatAmt(dYest.billing?.fvDump || 0);
+
+            document.getElementById('b-bal').innerText = '₹' + formatAmt(dToday.accounts?.balance);
+            document.getElementById('b-iss').innerText = '₹' + formatAmt(dToday.accounts?.issued);
+
+            document.getElementById('o-tpur').innerText = '₹' + formatAmt(dToday.billing?.totalPur);
+            document.getElementById('o-ent').innerText = dYest.billing?.entered || '0';
+            document.getElementById('o-pen').innerText = dYest.billing?.pending || '0';
+
+            statusEl.innerText = "Admin";
+            statusEl.style.color = "var(--text-muted)";
+        } catch (e) {
+            console.error("Firebase Error: ", e);
+            statusEl.innerText = "Error";
+            statusEl.style.color = "var(--g-red)";
+        }
+    }
+
+    function updateTile(id, s, p) {
+        document.getElementById(`${id}-s`).innerText = formatAmt(s);
+        document.getElementById(`${id}-p`).innerText = formatAmt(p);
+        const diff = s - p;
+        const diffEl = document.getElementById(`${id}-diff`);
+        diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(diff));
+        diffEl.style.color = diff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+
+        const bar = document.getElementById(`${id}-bar`);
+        let pct = p > 0 ? (s / p) * 100 : (s > 0 ? 100 : 0);
+        bar.style.width = Math.min(pct, 100) + '%';
+        bar.style.backgroundColor = s >= p ? 'var(--g-green)' : 'var(--g-red)';
+    }
+
+    function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
+    fetchAndRender();
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+        });
+    }
+</script>
+</body>
+</html>
