@@ -20,6 +20,7 @@
         .card { background: var(--card); padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         select, input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid transparent; background: #f1f5f9; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.3s; }
         select:focus, input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
+        input[readonly] { background: #e2e8f0; color: #475569; cursor: not-allowed; } /* Style for prefilled locked inputs */
         .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 4px; flex-shrink: 0; }
         .btn:active { transform: scale(0.98); }
 
@@ -34,7 +35,7 @@
         .date-box input { border: none; font-size: 15px; color: var(--text-main); background: transparent; padding: 0; margin: 0; width: auto; font-weight: 800; text-align: right; }
         
         .form-card { background: white; padding: 16px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex: 1; display: flex; flex-direction: column; min-height: 0; }
-        h3 { margin: 0 0 12px 0; font-weight: 800; font-size: 15px; color: var(--text-main); flex-shrink: 0; }
+        h3 { margin: 0 0 12px 0; font-weight: 800; font-size: 15px; color: var(--text-main); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         
         #form-content { flex: 1; overflow-y: auto; padding-right: 4px; }
         #form-content::-webkit-scrollbar { width: 4px; }
@@ -46,10 +47,6 @@
         
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
-    <!-- PWA Setup for Updates -->
-    <link rel="manifest" href="manifest-update.json">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="update-192.png">
 </head>
 <body>
 <div class="container">
@@ -89,18 +86,19 @@
 
 <!-- Firebase SDKs -->
 <script type="module">
+    // ADDED getDoc to imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
-  authDomain: "metro-iritty-app.firebaseapp.com",
-  projectId: "metro-iritty-app",
-  storageBucket: "metro-iritty-app.firebasestorage.app",
-  messagingSenderId: "377500415970",
-  appId: "1:377500415970:web:ccfcc8f6c199477ed2abbb"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
+      authDomain: "metro-iritty-app.firebaseapp.com",
+      projectId: "metro-iritty-app",
+      storageBucket: "metro-iritty-app.firebasestorage.app",
+      messagingSenderId: "377500415970",
+      appId: "1:377500415970:web:ccfcc8f6c199477ed2abbb"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -128,6 +126,9 @@ const firebaseConfig = {
         localStorage.removeItem('sm_session'); location.reload();
     });
 
+    // LISTENER: Check data whenever the date changes
+    document.getElementById('entry_date').addEventListener('change', checkExistingData);
+
     function loginUser(role) {
         currentUser = role;
         document.getElementById('login-screen').style.display = 'none';
@@ -138,17 +139,19 @@ const firebaseConfig = {
         const d = new Date();
         if(ROLES[role].default === 'yest') d.setDate(d.getDate() - 1);
         
-        // Format YYYY-MM-DD
         const yyyy = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const dd = String(d.getDate()).padStart(2, '0');
         dateInput.value = `${yyyy}-${mm}-${dd}`;
         
         renderForm(role);
+        
+        // Check data immediately upon login for the default date
+        checkExistingData();
     }
 
     function renderForm(role) {
-        let html = `<h3>${ROLES[role].label}</h3>`;
+        let html = `<h3 id="form-title">${ROLES[role].label} <span id="status-badge" style="font-size:10px; padding:4px 8px; border-radius:6px; font-weight:800;"></span></h3>`;
         if(role === 'purchase') {
             ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
                 html += `<div class="input-group"><label>${cat}</label><input type="number" id="p_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
@@ -171,6 +174,89 @@ const firebaseConfig = {
         document.getElementById('form-content').innerHTML = html;
     }
 
+    // NEW FUNCTION: Checks if data already exists for selected date and role
+    async function checkExistingData() {
+        const dateStr = document.getElementById('entry_date').value;
+        if (!dateStr || !currentUser) return;
+
+        const btn = document.getElementById('submit-btn');
+        const badge = document.getElementById('status-badge');
+        
+        btn.innerText = "Checking...";
+        btn.disabled = true;
+        badge.innerText = "";
+
+        try {
+            const docRef = doc(db, "daily_records", dateStr);
+            const docSnap = await getDoc(docRef);
+            
+            let hasData = false;
+            let data = {};
+
+            if (docSnap.exists()) {
+                const fullData = docSnap.data();
+                // Map current user role to database keys
+                let dbKey = currentUser === 'dataentry' ? 'billing' : currentUser;
+                
+                if (fullData[dbKey]) {
+                    hasData = true;
+                    data = fullData[dbKey];
+                }
+            }
+
+            // Reset all inputs first
+            document.querySelectorAll('#form-content input').forEach(inp => {
+                inp.value = '';
+                inp.readOnly = hasData; // Lock inputs if data exists
+            });
+
+            if (hasData) {
+                // Populate fields with saved data
+                if(currentUser === 'purchase') {
+                    document.getElementById('p_fooditems').value = data.food || '';
+                    document.getElementById('p_nonfood').value = data.nonfood || '';
+                    document.getElementById('p_promoters').value = data.promoter || '';
+                    document.getElementById('p_hwp').value = data.hwp || '';
+                } else if(currentUser === 'sales') {
+                    document.getElementById('s_fooditems').value = data.food || '';
+                    document.getElementById('s_nonfood').value = data.nonfood || '';
+                    document.getElementById('s_promoters').value = data.promoter || '';
+                    document.getElementById('s_hwp').value = data.hwp || '';
+                    document.getElementById('s_profit').value = data.profit || '';
+                    document.getElementById('s_voucher').value = data.voucher || '';
+                } else if(currentUser === 'accounts') {
+                    document.getElementById('acc_bal').value = data.balance || '';
+                    document.getElementById('acc_iss').value = data.issued || '';
+                } else if(currentUser === 'dataentry') {
+                    document.getElementById('de_ent').value = data.entered || '';
+                    document.getElementById('de_pen').value = data.pending || '';
+                    document.getElementById('de_fvdump').value = data.fvDump || '';
+                    document.getElementById('de_total_pur').value = data.totalPur || '';
+                }
+                
+                // Hide Submit Button and show "COMPLETED" badge
+                btn.style.display = 'none';
+                badge.innerText = "ALREADY SUBMITTED";
+                badge.style.background = "#dcfce7";
+                badge.style.color = "#166534";
+            } else {
+                // Restore Submit Button and show "PENDING" badge
+                btn.style.display = 'block';
+                btn.innerText = "Submit Data";
+                btn.disabled = false;
+                
+                badge.innerText = "PENDING ENTRY";
+                badge.style.background = "#fee2e2";
+                badge.style.color = "#991b1b";
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            btn.innerText = "Submit Data";
+            btn.disabled = false;
+        }
+    }
+
     document.getElementById('submit-btn').addEventListener('click', async () => {
         const dateStr = document.getElementById('entry_date').value;
         if (!dateStr) return alert("Select Date");
@@ -179,7 +265,7 @@ const firebaseConfig = {
         btn.innerText = "Saving...";
         btn.disabled = true;
 
-        let payload = { date: dateStr }; // Store date field for querying
+        let payload = { date: dateStr }; 
         
         if(currentUser === 'purchase') {
             payload.purchase = { 
@@ -212,23 +298,16 @@ const firebaseConfig = {
         }
 
         try {
-            // Merge true prevents overwriting other departments' entries for the same day
             await setDoc(doc(db, "daily_records", dateStr), payload, { merge: true });
             alert('Data Successfully Saved to Cloud!');
+            checkExistingData(); // Re-trigger the check to lock the fields and hide button instantly
         } catch (e) {
             console.error(e);
             alert("Error saving data. Check connection.");
-        } finally {
             btn.innerText = "Submit Data";
             btn.disabled = false;
         }
     });
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
-        });
-    }
 </script>
 </body>
 </html>
