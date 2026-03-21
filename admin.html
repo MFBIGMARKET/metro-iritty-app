@@ -29,7 +29,7 @@
         header span { font-weight: 500; color: var(--text-muted); }
         header input { border: none; color: var(--g-blue); font-family: inherit; font-weight: 700; font-size: 13px; outline: none; background: transparent; padding: 0; }
 
-        /* STRICT 2x4 GRID - Forces 8 equal tiles */
+        /* STRICT 2x4 GRID */
         .cat-grid { 
             flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); 
             gap: 8px; min-height: 0; padding-bottom: 5px;
@@ -42,40 +42,75 @@
             overflow: hidden;
         }
         
-        /* Unified Header Layout for all tiles */
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
         .cat-title-group { display: flex; align-items: center; gap: 6px; }
-        .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
         
-        /* Premium Month Badge */
         .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
         .month-badge.green { background: #dcfce7; color: #166534; }
         .month-badge.red { background: #fee2e2; color: #991b1b; }
         
         .cat-diff { font-size: 18px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
         
-        /* Progress Bar */
         .progress-container { height: 4px; background: #f1f5f9; border-radius: 2px; margin: 6px 0; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.8s ease; }
         
-        /* Stats Row */
-        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
-        .stat-item { display: flex; flex-direction: column; }
-        .sp-char { font-size: 9px; font-weight: 800; color: #000; letter-spacing: 0.5px; margin-bottom: 1px; }
-        .sp-val { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        /* Stats Row - Updated for 7-digit fit */
+.cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 4px; }
+.stat-item { display: flex; flex-direction: column; overflow: hidden; }
+.sp-char { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 1px; }
+.sp-val { 
+    font-size: 11px;           /* Smaller font size */
+    font-weight: 800; 
+    color: #000000;            /* Darker color (Pure Black) */
+    letter-spacing: -0.5px;    /* Pulls numbers closer together to save horizontal space */
+    white-space: nowrap;       /* Prevents numbers from breaking into two lines */
+}
 
-        /* Specific Tile Customizations */
-        .icon-small { font-size: 18px; opacity: 0.8; }
-        .bank-theme { background: #ffffff; border-color: #e0e7ff; }
-        .ops-theme { background: #0f172a; border-color: #1e293b; color: white; }
-        .ops-theme .cat-label { color: #94a3b8; }
-        .ops-theme .sp-val { color: #f8fafc; }
-        .ops-theme .sp-char { color: #cbd5e1; }
+        /* --- NEW BOTTOM TILE THEMES --- */
+        
+        .tile-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .tile-icon i { font-size: 16px; }
+
+        .divider { padding-top: 6px; margin-top: auto; }
+
+        /* 5. Profit Theme */
+        .profit-theme { background: #f0fdf4; border-color: #bbf7d0; }
+        .profit-theme .tile-icon { background: #dcfce7; color: #15803d; }
+        .profit-theme .cat-diff { color: #15803d; }
+        .profit-theme .sp-char { color: #166534; }
+        .profit-theme .sp-val { color: #15803d; }
+        .profit-theme .divider { border-top: 1px solid #bbf7d0; }
+
+        /* 6. Dump Theme */
+        .dump-theme { background: #fef2f2; border-color: #fecaca; }
+        .dump-theme .tile-icon { background: #fee2e2; color: #b91c1c; }
+        .dump-theme .cat-diff { color: #dc2626; }
+        .dump-theme .sp-char { color: #991b1b; }
+        .dump-theme .sp-val { color: #b91c1c; }
+        .dump-theme .divider { border-top: 1px solid #fecaca; }
+
+        /* 7. Bank Theme (Dark & Stand Out) */
+        .bank-theme { background: #09090b; border-color: #27272a; }
+        .bank-theme .cat-label { color: #a1a1aa; }
+        .bank-theme .tile-icon { background: #27272a; color: #38bdf8; }
+        .bank-theme .cat-diff { color: #38bdf8; font-size: 20px;}
+        .bank-theme .sp-char { color: #71717a; }
+        .bank-theme .sp-val { color: #e4e4e7; }
+        .bank-theme .divider { border-top: 1px solid #27272a; }
+
+        /* 8. Ops Theme (Vibrant Gradient) */
+        .ops-theme { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); border-color: #3730a3; }
+        .ops-theme .cat-label { color: #a5b4fc; }
+        .ops-theme .tile-icon { background: rgba(255,255,255,0.15); color: #e0e7ff; }
+        .ops-theme .cat-diff { color: #facc15; font-size: 20px;}
+        .ops-theme .sp-char { color: #818cf8; }
+        .ops-theme .sp-val { color: #ffffff; }
+        .ops-theme .divider { border-top: 1px solid rgba(255,255,255,0.15); }
+        .val-green { color: #34d399 !important; }
+        .val-red { color: #f87171 !important; }
+
     </style>
-    <!-- PWA Setup for Admin -->
-    <link rel="manifest" href="manifest-admin.json">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="admin-192.png">
 </head>
 <body>
 
@@ -139,26 +174,27 @@
         </div>
 
         <!-- 5. PROFIT VS VOUCHER -->
-        <div class="cat-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+        <div class="cat-card profit-theme">
             <div class="card-header">
                 <div class="cat-title-group"><span class="cat-label" style="color:#15803d">NET PROFIT</span><span class="month-badge green">MON</span></div>
+                <div class="tile-icon"><i class="material-icons-round">savings</i></div>
             </div>
             <div class="cat-diff" id="pv-diff">₹0</div>
-            <div class="progress-container"><div id="pv-bar" class="progress-bar"></div></div>
-            <div class="cat-stats">
-                <div class="stat-item"><span class="sp-char" style="color:#166534">PROFIT</span><span class="sp-val" id="pv-p" style="color:#15803d">0</span></div>
-                <div class="stat-item" style="text-align:right"><span class="sp-char" style="color:#166534">VOUCHER</span><span class="sp-val" id="pv-v" style="color:#15803d">0</span></div>
+            <div class="cat-stats divider">
+                <div class="stat-item"><span class="sp-char">PROFIT</span><span class="sp-val" id="pv-p">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">VOUCHER</span><span class="sp-val" id="pv-v">0</span></div>
             </div>
         </div>
 
         <!-- 6. F&V DUMP -->
-        <div class="cat-card" style="background: #fef2f2; border-color: #fecaca;">
+        <div class="cat-card dump-theme">
             <div class="card-header">
                 <div class="cat-title-group"><span class="cat-label" style="color:#b91c1c">F&V DUMP</span><span class="month-badge red">MON</span></div>
+                <div class="tile-icon"><i class="material-icons-round">delete_sweep</i></div>
             </div>
-            <div class="cat-diff" id="fv-cumul" style="color:#ef4444">₹0</div>
-            <div class="cat-stats" style="border-top: 1px solid #fca5a5; padding-top: 4px; margin-top: auto;">
-                <div class="stat-item"><span class="sp-char" style="color:#991b1b">YEST. DUMP</span><span class="sp-val" id="fv-yest" style="color:#b91c1c; font-size:14px; font-weight:800;">₹0</span></div>
+            <div class="cat-diff" id="fv-cumul">₹0</div>
+            <div class="cat-stats divider">
+                <div class="stat-item"><span class="sp-char">YEST. DUMP</span><span class="sp-val" id="fv-yest">₹0</span></div>
             </div>
         </div>
 
@@ -166,24 +202,24 @@
         <div class="cat-card bank-theme">
             <div class="card-header">
                 <div class="cat-label">BANK TODAY</div>
-                <i class="material-icons-round icon-small" style="color:var(--g-blue)">account_balance</i>
+                <div class="tile-icon"><i class="material-icons-round">account_balance</i></div>
             </div>
-            <div class="cat-diff" id="b-bal" style="color:var(--g-blue); font-size:22px;">₹0</div>
-            <div class="cat-stats" style="border-top: 1px solid #e0e7ff; padding-top: 4px;">
-                <div class="stat-item"><span class="sp-char">ISSUED TODAY</span><span class="sp-val" id="b-iss" style="color:var(--text-dark); font-size:14px; font-weight:800;">₹0</span></div>
+            <div class="cat-diff" id="b-bal">₹0</div>
+            <div class="cat-stats divider">
+                <div class="stat-item"><span class="sp-char">ISSUED TODAY</span><span class="sp-val" id="b-iss">₹0</span></div>
             </div>
         </div>
 
         <!-- 8. OPS SQUARE -->
         <div class="cat-card ops-theme">
             <div class="card-header">
-                <div class="cat-label">TODAY'S PURCH</div>
-                <i class="material-icons-round icon-small" style="color:var(--g-yellow)">snippet_folder</i>
+                <div class="cat-label">YEST. PURCH</div>
+                <div class="tile-icon"><i class="material-icons-round">receipt_long</i></div>
             </div>
-            <div class="cat-diff" id="o-tpur" style="color:var(--g-yellow); font-size:22px;">₹0</div>
-            <div class="cat-stats" style="border-top: 1px solid #334155; padding-top: 4px;">
-                <div class="stat-item"><span class="sp-char">ENT</span><span class="sp-val" id="o-ent" style="color:var(--g-green); font-size:14px; font-weight:800;">0</span></div>
-                <div class="stat-item" style="text-align:right"><span class="sp-char">PEN</span><span class="sp-val" id="o-pen" style="color:var(--g-red); font-size:14px; font-weight:800;">0</span></div>
+            <div class="cat-diff" id="o-tpur">₹0</div>
+            <div class="cat-stats divider">
+                <div class="stat-item"><span class="sp-char">ENTERED</span><span class="sp-val val-green" id="o-ent">0</span></div>
+                <div class="stat-item" style="text-align:right"><span class="sp-char">PENDING</span><span class="sp-val val-red" id="o-pen">0</span></div>
             </div>
         </div>
 
@@ -194,15 +230,15 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
-  authDomain: "metro-iritty-app.firebaseapp.com",
-  projectId: "metro-iritty-app",
-  storageBucket: "metro-iritty-app.firebasestorage.app",
-  messagingSenderId: "377500415970",
-  appId: "1:377500415970:web:ccfcc8f6c199477ed2abbb"
-};
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
+      authDomain: "metro-iritty-app.firebaseapp.com",
+      projectId: "metro-iritty-app",
+      storageBucket: "metro-iritty-app.firebasestorage.app",
+      messagingSenderId: "377500415970",
+      appId: "1:377500415970:web:ccfcc8f6c199477ed2abbb"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -223,7 +259,6 @@ const firebaseConfig = {
         const selectedStr = datePicker.value;
         const selectedDate = new Date(selectedStr);
         
-        // Update all month badges to current month (e.g., "JUN")
         const currentMonthTag = monthNames[selectedDate.getMonth()];
         document.querySelectorAll('.month-badge').forEach(badge => { badge.innerText = currentMonthTag; });
         
@@ -265,10 +300,6 @@ const firebaseConfig = {
             const pvEl = document.getElementById(`pv-diff`);
             pvEl.innerText = (pvDiff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(pvDiff));
             pvEl.style.color = pvDiff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
-            const pvBar = document.getElementById(`pv-bar`);
-            let pvPct = sum.voucher > 0 ? (sum.profit / sum.voucher) * 100 : (sum.profit > 0 ? 100 : 0);
-            pvBar.style.width = Math.min(pvPct, 100) + '%';
-            pvBar.style.backgroundColor = pvDiff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
 
             document.getElementById('fv-cumul').innerText = '₹' + formatAmt(sum.fv_dump);
             document.getElementById('fv-yest').innerText = '₹' + formatAmt(dYest.billing?.fvDump || 0);
@@ -276,7 +307,8 @@ const firebaseConfig = {
             document.getElementById('b-bal').innerText = '₹' + formatAmt(dToday.accounts?.balance);
             document.getElementById('b-iss').innerText = '₹' + formatAmt(dToday.accounts?.issued);
 
-            document.getElementById('o-tpur').innerText = '₹' + formatAmt(dToday.billing?.totalPur);
+            // FIXED: Pulled from dYest so Total Purch aligns with Entered and Pending
+            document.getElementById('o-tpur').innerText = '₹' + formatAmt(dYest.billing?.totalPur);
             document.getElementById('o-ent').innerText = dYest.billing?.entered || '0';
             document.getElementById('o-pen').innerText = dYest.billing?.pending || '0';
 
@@ -305,12 +337,6 @@ const firebaseConfig = {
 
     function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
     fetchAndRender();
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
-        });
-    }
 </script>
 </body>
 </html>
