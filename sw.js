@@ -1,21 +1,20 @@
-const CACHE_NAME = 'metro-app-v1';
-const urlsToCache = [
-  './admin.html',
-  './update.html'
-];
+const CACHE_NAME = 'metro-pwa-v2';
 
-// Install the service worker
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
-    })
-  );
+    // Forces the service worker to activate immediately
+    self.skipWaiting(); 
 });
 
-// Fetch from network first, fallback to cache
+self.addEventListener('activate', event => {
+    event.waitUntil(self.clients.claim());
+});
+
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
-  );
+    // Satisfies the PWA requirement by having a fetch handler
+    // Network-first strategy (always gets fresh data from GitHub)
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            return caches.match(event.request);
+        })
+    );
 });

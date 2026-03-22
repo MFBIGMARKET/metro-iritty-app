@@ -20,7 +20,7 @@
         .card { background: var(--card); padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         select, input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid transparent; background: #f1f5f9; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.3s; }
         select:focus, input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
-        input[readonly] { background: #e2e8f0; color: #475569; cursor: not-allowed; } /* Style for prefilled locked inputs */
+        input[readonly] { background: #e2e8f0; color: #475569; cursor: not-allowed; } 
         .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 4px; flex-shrink: 0; }
         .btn:active { transform: scale(0.98); }
 
@@ -86,7 +86,6 @@
 
 <!-- Firebase SDKs -->
 <script type="module">
-    // ADDED getDoc to imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
@@ -126,7 +125,6 @@
         localStorage.removeItem('sm_session'); location.reload();
     });
 
-    // LISTENER: Check data whenever the date changes
     document.getElementById('entry_date').addEventListener('change', checkExistingData);
 
     function loginUser(role) {
@@ -145,8 +143,6 @@
         dateInput.value = `${yyyy}-${mm}-${dd}`;
         
         renderForm(role);
-        
-        // Check data immediately upon login for the default date
         checkExistingData();
     }
 
@@ -174,7 +170,6 @@
         document.getElementById('form-content').innerHTML = html;
     }
 
-    // NEW FUNCTION: Checks if data already exists for selected date and role
     async function checkExistingData() {
         const dateStr = document.getElementById('entry_date').value;
         if (!dateStr || !currentUser) return;
@@ -195,7 +190,6 @@
 
             if (docSnap.exists()) {
                 const fullData = docSnap.data();
-                // Map current user role to database keys
                 let dbKey = currentUser === 'dataentry' ? 'billing' : currentUser;
                 
                 if (fullData[dbKey]) {
@@ -204,14 +198,13 @@
                 }
             }
 
-            // Reset all inputs first
+            // Make sure inputs are always editable
             document.querySelectorAll('#form-content input').forEach(inp => {
                 inp.value = '';
-                inp.readOnly = hasData; // Lock inputs if data exists
+                inp.readOnly = false; // Never lock inputs
             });
 
             if (hasData) {
-                // Populate fields with saved data
                 if(currentUser === 'purchase') {
                     document.getElementById('p_fooditems').value = data.food || '';
                     document.getElementById('p_nonfood').value = data.nonfood || '';
@@ -234,13 +227,16 @@
                     document.getElementById('de_total_pur').value = data.totalPur || '';
                 }
                 
-                // Hide Submit Button and show "COMPLETED" badge
-                btn.style.display = 'none';
-                badge.innerText = "ALREADY SUBMITTED";
-                badge.style.background = "#dcfce7";
-                badge.style.color = "#166534";
+                // Show Update Button and "EDITING" badge
+                btn.style.display = 'block';
+                btn.innerText = "Update Data";
+                btn.disabled = false;
+                
+                badge.innerText = "EDITING SAVED DATA";
+                badge.style.background = "#fef08a"; // Yellow highlight
+                badge.style.color = "#854d0e";
             } else {
-                // Restore Submit Button and show "PENDING" badge
+                // Standard Submit Button and "PENDING" badge
                 btn.style.display = 'block';
                 btn.innerText = "Submit Data";
                 btn.disabled = false;
@@ -300,7 +296,7 @@
         try {
             await setDoc(doc(db, "daily_records", dateStr), payload, { merge: true });
             alert('Data Successfully Saved to Cloud!');
-            checkExistingData(); // Re-trigger the check to lock the fields and hide button instantly
+            checkExistingData(); // Re-trigger the check to update the button back to "Update Data"
         } catch (e) {
             console.error(e);
             alert("Error saving data. Check connection.");
@@ -308,6 +304,15 @@
             btn.disabled = false;
         }
     });
+</script>
+
+<script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js');
+        });
+    }
 </script>
 </body>
 </html>

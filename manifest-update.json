@@ -1,12 +1,13 @@
 {
   "name": "Metro Iritty Updates",
   "short_name": "Metro Updates",
-  "start_url": "./update.html",
+  "start_url": "update.html",
+  "scope": ".",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#ffffff",
   "icons": [
-    { "src": "update-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "update-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "update-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "update-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

@@ -338,5 +338,13 @@
     function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
     fetchAndRender();
 </script>
+<script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js');
+        });
+    }
+</script>
 </body>
 </html>
