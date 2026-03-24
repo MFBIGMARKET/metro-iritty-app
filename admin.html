@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Metro Iritty Admin</title>
-        <link rel="manifest" href="manifest-admin.json">
+    <title>Metro Admin</title>
+    <link rel="manifest" href="manifest-admin.json">
     <meta name="theme-color" content="#f8fafc">
     <link rel="apple-touch-icon" href="admin-192.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
@@ -28,11 +29,11 @@
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; flex-shrink: 0;
         }
-        header h1 { font-size: 15px; margin: 0; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
-        header span { font-weight: 500; color: var(--text-muted); }
+        /* Added user-select: none so long-press doesn't highlight text */
+        header h1 { font-size: 15px; margin: 0; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; cursor: pointer; user-select: none; -webkit-user-select: none;}
+        header span { font-weight: 500; color: var(--text-muted); pointer-events: none;}
         header input { border: none; color: var(--g-blue); font-family: inherit; font-weight: 700; font-size: 13px; outline: none; background: transparent; padding: 0; }
 
-        /* STRICT 2x4 GRID */
         .cat-grid { 
             flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); 
             gap: 8px; min-height: 0; padding-bottom: 5px;
@@ -58,26 +59,15 @@
         .progress-container { height: 4px; background: #f1f5f9; border-radius: 2px; margin: 6px 0; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.8s ease; }
         
-        /* Stats Row - Updated for 7-digit fit */
-.cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 4px; }
-.stat-item { display: flex; flex-direction: column; overflow: hidden; }
-.sp-char { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 1px; }
-.sp-val { 
-    font-size: 11px;           /* Smaller font size */
-    font-weight: 800; 
-    color: #000000;            /* Darker color (Pure Black) */
-    letter-spacing: -0.5px;    /* Pulls numbers closer together to save horizontal space */
-    white-space: nowrap;       /* Prevents numbers from breaking into two lines */
-}
+        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 4px; }
+        .stat-item { display: flex; flex-direction: column; overflow: hidden; }
+        .sp-char { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 1px; }
+        .sp-val { font-size: 11px; font-weight: 800; color: #000000; letter-spacing: -0.5px; white-space: nowrap; }
 
-        /* --- NEW BOTTOM TILE THEMES --- */
-        
         .tile-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .tile-icon i { font-size: 16px; }
-
         .divider { padding-top: 6px; margin-top: auto; }
 
-        /* 5. Profit Theme */
         .profit-theme { background: #f0fdf4; border-color: #bbf7d0; }
         .profit-theme .tile-icon { background: #dcfce7; color: #15803d; }
         .profit-theme .cat-diff { color: #15803d; }
@@ -85,7 +75,6 @@
         .profit-theme .sp-val { color: #15803d; }
         .profit-theme .divider { border-top: 1px solid #bbf7d0; }
 
-        /* 6. Dump Theme */
         .dump-theme { background: #fef2f2; border-color: #fecaca; }
         .dump-theme .tile-icon { background: #fee2e2; color: #b91c1c; }
         .dump-theme .cat-diff { color: #dc2626; }
@@ -93,7 +82,6 @@
         .dump-theme .sp-val { color: #b91c1c; }
         .dump-theme .divider { border-top: 1px solid #fecaca; }
 
-        /* 7. Bank Theme (Dark & Stand Out) */
         .bank-theme { background: #09090b; border-color: #27272a; }
         .bank-theme .cat-label { color: #a1a1aa; }
         .bank-theme .tile-icon { background: #27272a; color: #38bdf8; }
@@ -102,7 +90,6 @@
         .bank-theme .sp-val { color: #e4e4e7; }
         .bank-theme .divider { border-top: 1px solid #27272a; }
 
-        /* 8. Ops Theme (Vibrant Gradient) */
         .ops-theme { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); border-color: #3730a3; }
         .ops-theme .cat-label { color: #a5b4fc; }
         .ops-theme .tile-icon { background: rgba(255,255,255,0.15); color: #e0e7ff; }
@@ -112,14 +99,14 @@
         .ops-theme .divider { border-top: 1px solid rgba(255,255,255,0.15); }
         .val-green { color: #34d399 !important; }
         .val-red { color: #f87171 !important; }
-
     </style>
 </head>
 <body>
 
 <div class="dashboard">
     <header>
-        <h1>Metro Iritty <span id="sync-status">Admin</span></h1>
+        <!-- Added ID for Long Press -->
+        <h1 id="app-title">Metro Iritty <span id="sync-status">Admin</span></h1>
         <input type="date" id="admin_date">
     </header>
 
@@ -179,7 +166,7 @@
         <!-- 5. PROFIT VS VOUCHER -->
         <div class="cat-card profit-theme">
             <div class="card-header">
-                <div class="cat-title-group"><span class="cat-label" style="color:#15803d">PRO V/S VOU</span><span class="month-badge green">MON</span></div>
+                <div class="cat-title-group"><span class="cat-label" style="color:#15803d">NET PROFIT</span><span class="month-badge green">MON</span></div>
                 <div class="tile-icon"><i class="material-icons-round">savings</i></div>
             </div>
             <div class="cat-diff" id="pv-diff">₹0</div>
@@ -233,7 +220,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
       authDomain: "metro-iritty-app.firebaseapp.com",
@@ -246,12 +232,40 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Branch Logic
+    let currentBranch = localStorage.getItem('admin_branch') || 'iritty';
+    const appTitle = document.getElementById('app-title');
+
+    function updateTitleDisplay() {
+        const branchName = currentBranch === 'iritty' ? 'Metro Iritty' : 'Metro Mtr';
+        appTitle.innerHTML = `${branchName} <span id="sync-status">Admin</span>`;
+    }
+    updateTitleDisplay();
+
+    // Long Press Logic
+    let pressTimer;
+    appTitle.addEventListener('touchstart', startPress);
+    appTitle.addEventListener('mousedown', startPress);
+    appTitle.addEventListener('touchend', cancelPress);
+    appTitle.addEventListener('mouseleave', cancelPress);
+    appTitle.addEventListener('mouseup', cancelPress);
+
+    function startPress(e) {
+        pressTimer = setTimeout(() => {
+            currentBranch = currentBranch === 'iritty' ? 'mtr' : 'iritty';
+            localStorage.setItem('admin_branch', currentBranch);
+            updateTitleDisplay();
+            if (navigator.vibrate) navigator.vibrate(50); // Small vibration if supported
+            fetchAndRender();
+        }, 1000); // 1 second hold
+    }
+    function cancelPress() { clearTimeout(pressTimer); }
+
+    // Date Logic
     const datePicker = document.getElementById('admin_date');
     const d = new Date();
     datePicker.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    
     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-
     datePicker.addEventListener('change', fetchAndRender);
 
     async function fetchAndRender() {
@@ -266,13 +280,15 @@
         document.querySelectorAll('.month-badge').forEach(badge => { badge.innerText = currentMonthTag; });
         
         const monthStartStr = selectedStr.substring(0, 8) + '01';
-        
         const yest = new Date(selectedDate);
         yest.setDate(yest.getDate() - 1);
         const yesterdayStr = `${yest.getFullYear()}-${String(yest.getMonth() + 1).padStart(2, '0')}-${String(yest.getDate()).padStart(2, '0')}`;
 
+        // Select the correct collection based on the branch
+        const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
+
         try {
-            const q = query(collection(db, "daily_records"), where("date", ">=", monthStartStr), where("date", "<=", selectedStr));
+            const q = query(collection(db, collectionName), where("date", ">=", monthStartStr), where("date", "<=", selectedStr));
             const snapshot = await getDocs(q);
 
             let sum = { f_s:0, f_p:0, nf_s:0, nf_p:0, pr_s:0, pr_p:0, hwp_s:0, hwp_p:0, profit:0, voucher:0, fv_dump:0 };
@@ -310,7 +326,6 @@
             document.getElementById('b-bal').innerText = '₹' + formatAmt(dToday.accounts?.balance);
             document.getElementById('b-iss').innerText = '₹' + formatAmt(dToday.accounts?.issued);
 
-            // FIXED: Pulled from dYest so Total Purch aligns with Entered and Pending
             document.getElementById('o-tpur').innerText = '₹' + formatAmt(dYest.billing?.totalPur);
             document.getElementById('o-ent').innerText = dYest.billing?.entered || '0';
             document.getElementById('o-pen').innerText = dYest.billing?.pending || '0';
@@ -342,11 +357,8 @@
     fetchAndRender();
 </script>
 <script>
-    // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js');
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
     }
 </script>
 </body>
