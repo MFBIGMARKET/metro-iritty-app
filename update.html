@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Metro Iritty Updates</title>
-        <link rel="manifest" href="manifest-update.json">
+    <title>Metro Updates</title>
+    <link rel="manifest" href="manifest-update.json">
     <meta name="theme-color" content="#f8fafc">
     <link rel="apple-touch-icon" href="update-192.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root { --primary: #2563eb; --surface: #f8fafc; --card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; }
         *, *::before, *::after { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--text-main); display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
-        .container { width: 100%; max-width: 450px; padding: 12px; display: flex; flex-direction: column; height: 100%; }
+        .container { width: 100%; max-width: 450px; padding: 12px; display: flex; flex-direction: column; height: 100%; position: relative;}
         
         #login-screen { display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; animation: fadeUp 0.5s ease; padding-bottom: 10vh; }
         .app-logo { font-size: 48px; color: var(--primary); margin-bottom: 8px; background: #eff6ff; padding: 16px; border-radius: 24px; display: inline-block; }
@@ -30,9 +31,13 @@
         #app-screen { display: none; flex-direction: column; height: 100%; gap: 8px; animation: fadeUp 0.4s ease; }
         header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); flex-shrink: 0; }
         .role-badge { display: flex; flex-direction: column; }
-        .role-badge span { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .role-badge span { font-size: 11px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .role-badge strong { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: capitalize; margin-top: 2px;}
         
+        .header-actions { display: flex; gap: 8px; }
+        .action-btn { border: none; padding: 8px 10px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .action-btn:active { transform: scale(0.95); }
+
         .date-box { background: var(--card); padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); flex-shrink: 0; }
         .date-box label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
         .date-box input { border: none; font-size: 15px; color: var(--text-main); background: transparent; padding: 0; margin: 0; width: auto; font-weight: 800; text-align: right; }
@@ -48,15 +53,21 @@
         .input-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase; }
         .input-group input { margin-bottom: 0; }
         
+        /* Settings Modal */
+        #settings-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; animation: fadeUp 0.2s ease; }
+        .modal-card { background: #fff; width: 85%; max-width: 320px; padding: 24px; border-radius: 24px; text-align: center; }
+        .modal-card h3 { justify-content: center; margin-bottom: 16px; }
+
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 <div class="container">
+    
     <div id="login-screen">
         <div style="margin: 0 auto;">
             <i class="material-icons-round app-logo">storefront</i>
-            <h1 class="app-title">Metro Iritty</h1>
+            <h1 class="app-title">Metro Updates</h1>
             <p class="app-subtitle">Secure Staff Portal</p>
         </div>
         <div class="card">
@@ -71,10 +82,26 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settings-modal">
+        <div class="modal-card">
+            <h3>Select Branch</h3>
+            <select id="branch-select">
+                <option value="iritty">Metro Iritty</option>
+                <option value="mtr">Metro Mtr</option>
+            </select>
+            <button class="btn" onclick="saveSettings()">Save & Switch</button>
+            <button class="btn" style="background:#f1f5f9; color:#0f172a; margin-top:8px;" onclick="closeSettings()">Cancel</button>
+        </div>
+    </div>
+
     <div id="app-screen">
         <header>
-            <div class="role-badge"><span>Active Session</span><strong id="display-role">Role</strong></div>
-            <button id="logout-btn" style="background:#fee2e2; color:#ef4444; border:none; padding:8px 10px; border-radius:10px; font-weight:700; display:flex; align-items:center;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
+            <div class="role-badge"><span id="app-branch-badge">Metro Iritty</span><strong id="display-role">Role</strong></div>
+            <div class="header-actions">
+                <button class="action-btn" style="background:#f1f5f9; color:#475569;" onclick="openSettings()"><i class="material-icons-round" style="font-size:18px;">settings</i></button>
+                <button class="action-btn" id="logout-btn" style="background:#fee2e2; color:#ef4444;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
+            </div>
         </header>
         <div class="date-box">
             <label>Reporting Date</label>
@@ -92,7 +119,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    // Your web app's Firebase configuration
+    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
       authDomain: "metro-iritty-app.firebaseapp.com",
@@ -105,6 +132,28 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // --- Branch Settings Logic ---
+    let currentBranch = localStorage.getItem('update_branch') || 'iritty';
+    
+    function updateBranchDisplay() {
+        document.getElementById('app-branch-badge').innerText = currentBranch === 'iritty' ? '📍 Metro Iritty' : '📍 Metro Mtr';
+    }
+    updateBranchDisplay();
+
+    window.openSettings = () => {
+        document.getElementById('branch-select').value = currentBranch;
+        document.getElementById('settings-modal').style.display = 'flex';
+    }
+    window.closeSettings = () => { document.getElementById('settings-modal').style.display = 'none'; }
+    window.saveSettings = () => {
+        currentBranch = document.getElementById('branch-select').value;
+        localStorage.setItem('update_branch', currentBranch);
+        updateBranchDisplay();
+        closeSettings();
+        checkExistingData(); // Re-fetch data instantly for the newly selected branch
+    }
+    // -----------------------------
+
     const ROLES = {
         purchase: { pass: "pur123", label: "YESTERDAY'S PURCHASE", default: 'yest' },
         sales: { pass: "sale456", label: "YESTERDAY'S SALES", default: 'yest' },
@@ -113,7 +162,6 @@
     };
 
     let currentUser = localStorage.getItem('sm_session');
-
     window.onload = () => { if(currentUser) loginUser(currentUser); };
 
     document.getElementById('login-btn').addEventListener('click', () => {
@@ -184,8 +232,10 @@
         btn.disabled = true;
         badge.innerText = "";
 
+        const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
+
         try {
-            const docRef = doc(db, "daily_records", dateStr);
+            const docRef = doc(db, collectionName, dateStr);
             const docSnap = await getDoc(docRef);
             
             let hasData = false;
@@ -201,10 +251,9 @@
                 }
             }
 
-            // Make sure inputs are always editable
             document.querySelectorAll('#form-content input').forEach(inp => {
                 inp.value = '';
-                inp.readOnly = false; // Never lock inputs
+                inp.readOnly = false; 
             });
 
             if (hasData) {
@@ -230,16 +279,14 @@
                     document.getElementById('de_total_pur').value = data.totalPur || '';
                 }
                 
-                // Show Update Button and "EDITING" badge
                 btn.style.display = 'block';
                 btn.innerText = "Update Data";
                 btn.disabled = false;
                 
                 badge.innerText = "EDITING SAVED DATA";
-                badge.style.background = "#fef08a"; // Yellow highlight
+                badge.style.background = "#fef08a"; 
                 badge.style.color = "#854d0e";
             } else {
-                // Standard Submit Button and "PENDING" badge
                 btn.style.display = 'block';
                 btn.innerText = "Submit Data";
                 btn.disabled = false;
@@ -296,10 +343,12 @@
             };
         }
 
+        const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
+
         try {
-            await setDoc(doc(db, "daily_records", dateStr), payload, { merge: true });
+            await setDoc(doc(db, collectionName, dateStr), payload, { merge: true });
             alert('Data Successfully Saved to Cloud!');
-            checkExistingData(); // Re-trigger the check to update the button back to "Update Data"
+            checkExistingData(); 
         } catch (e) {
             console.error(e);
             alert("Error saving data. Check connection.");
@@ -310,11 +359,8 @@
 </script>
 
 <script>
-    // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js');
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
     }
 </script>
 </body>
