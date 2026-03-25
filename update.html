@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --surface: #f8fafc; --card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; }
+        :root { --primary: #2563eb; --surface: #f8fafc; --card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; 
+                --g-green: #10b981; --g-red: #ef4444; }
         *, *::before, *::after { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--text-main); display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
         .container { width: 100%; max-width: 450px; padding: 12px; display: flex; flex-direction: column; height: 100%; position: relative;}
@@ -35,7 +36,7 @@
         .role-badge strong { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: capitalize; margin-top: 2px;}
         
         .header-actions { display: flex; gap: 8px; }
-        .action-btn { border: none; padding: 8px 10px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .action-btn { border: none; padding: 8px 10px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .action-btn:active { transform: scale(0.95); }
 
         .date-box { background: var(--card); padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); flex-shrink: 0; }
@@ -58,6 +59,25 @@
         .modal-card { background: #fff; width: 85%; max-width: 320px; padding: 24px; border-radius: 24px; text-align: center; }
         .modal-card h3 { justify-content: center; margin-bottom: 16px; }
 
+        /* Report Modal (Admin Dashboard Clone) */
+        #report-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--surface); z-index: 200; flex-direction: column; animation: fadeUp 0.3s ease; }
+        .report-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .report-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .cat-card { background: var(--card); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; min-height: 120px; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .cat-title-group { display: flex; align-items: center; gap: 6px; }
+        .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
+        .cat-diff { font-size: 18px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
+        .progress-container { height: 4px; background: #f1f5f9; border-radius: 2px; margin: 6px 0; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.8s ease; }
+        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 4px; }
+        .stat-item { display: flex; flex-direction: column; overflow: hidden; }
+        .sp-char { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 1px; }
+        .sp-val { font-size: 11px; font-weight: 800; color: #000000; letter-spacing: -0.5px; white-space: nowrap; }
+
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -67,7 +87,7 @@
     <div id="login-screen">
         <div style="margin: 0 auto;">
             <i class="material-icons-round app-logo">storefront</i>
-            <h1 class="app-title">Metro Updates</h1>
+            <h1 class="app-title" id="login-app-title">Metro Iritty</h1>
             <p class="app-subtitle">Secure Staff Portal</p>
         </div>
         <div class="card">
@@ -95,10 +115,67 @@
         </div>
     </div>
 
+    <!-- Dashboard/Report Modal -->
+    <div id="report-modal">
+        <div class="report-header">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Purchase Report</h2>
+                <span id="report-date-label" style="font-size:12px; color:var(--text-muted); font-weight:600;">Syncing...</span>
+            </div>
+            <button class="action-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeReport()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
+        </div>
+        <div class="report-content">
+            <div class="cat-grid">
+                <!-- FOOD -->
+                <div class="cat-card">
+                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge dyn-month">MON</span></div></div>
+                    <div class="cat-diff" id="r_f-diff">₹0</div>
+                    <div class="progress-container"><div id="r_f-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats">
+                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_f-s">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_f-p">0</span></div>
+                    </div>
+                </div>
+                <!-- NON-FOOD -->
+                <div class="cat-card">
+                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge dyn-month">MON</span></div></div>
+                    <div class="cat-diff" id="r_nf-diff">₹0</div>
+                    <div class="progress-container"><div id="r_nf-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats">
+                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_nf-s">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_nf-p">0</span></div>
+                    </div>
+                </div>
+                <!-- PROMOTER -->
+                <div class="cat-card">
+                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge dyn-month">MON</span></div></div>
+                    <div class="cat-diff" id="r_pr-diff">₹0</div>
+                    <div class="progress-container"><div id="r_pr-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats">
+                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_pr-s">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_pr-p">0</span></div>
+                    </div>
+                </div>
+                <!-- HWP -->
+                <div class="cat-card">
+                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge dyn-month">MON</span></div></div>
+                    <div class="cat-diff" id="r_hwp-diff">₹0</div>
+                    <div class="progress-container"><div id="r_hwp-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats">
+                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_hwp-s">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_hwp-p">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="app-screen">
         <header>
             <div class="role-badge"><span id="app-branch-badge">Metro Iritty</span><strong id="display-role">Role</strong></div>
             <div class="header-actions">
+                <!-- Report Button (Hidden by default, shown only for purchase) -->
+                <button class="action-btn" id="report-btn" style="background:#e0e7ff; color:#3730a3; display:none;" onclick="openReport()"><i class="material-icons-round" style="font-size:18px;">analytics</i></button>
                 <button class="action-btn" style="background:#f1f5f9; color:#475569;" onclick="openSettings()"><i class="material-icons-round" style="font-size:18px;">settings</i></button>
                 <button class="action-btn" id="logout-btn" style="background:#fee2e2; color:#ef4444;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
             </div>
@@ -117,9 +194,8 @@
 <!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA5RmBNL1oapmqRnJo7SrFjTden68FdIZo",
       authDomain: "metro-iritty-app.firebaseapp.com",
@@ -134,8 +210,10 @@
 
     // --- Branch Settings Logic ---
     let currentBranch = localStorage.getItem('update_branch') || 'iritty';
+    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     
     function updateBranchDisplay() {
+        document.getElementById('login-app-title').innerText = currentBranch === 'iritty' ? 'Metro Iritty' : 'Metro Mtr';
         document.getElementById('app-branch-badge').innerText = currentBranch === 'iritty' ? '📍 Metro Iritty' : '📍 Metro Mtr';
     }
     updateBranchDisplay();
@@ -150,7 +228,7 @@
         localStorage.setItem('update_branch', currentBranch);
         updateBranchDisplay();
         closeSettings();
-        checkExistingData(); // Re-fetch data instantly for the newly selected branch
+        checkExistingData(); 
     }
     // -----------------------------
 
@@ -183,6 +261,11 @@
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app-screen').style.display = 'flex';
         document.getElementById('display-role').innerText = role;
+        
+        // Show Report Button ONLY for purchase user
+        if (role === 'purchase') {
+            document.getElementById('report-btn').style.display = 'flex';
+        }
         
         const dateInput = document.getElementById('entry_date');
         const d = new Date();
@@ -244,11 +327,7 @@
             if (docSnap.exists()) {
                 const fullData = docSnap.data();
                 let dbKey = currentUser === 'dataentry' ? 'billing' : currentUser;
-                
-                if (fullData[dbKey]) {
-                    hasData = true;
-                    data = fullData[dbKey];
-                }
+                if (fullData[dbKey]) { hasData = true; data = fullData[dbKey]; }
             }
 
             document.querySelectorAll('#form-content input').forEach(inp => {
@@ -279,27 +358,14 @@
                     document.getElementById('de_total_pur').value = data.totalPur || '';
                 }
                 
-                btn.style.display = 'block';
-                btn.innerText = "Update Data";
-                btn.disabled = false;
-                
-                badge.innerText = "EDITING SAVED DATA";
-                badge.style.background = "#fef08a"; 
-                badge.style.color = "#854d0e";
+                btn.style.display = 'block'; btn.innerText = "Update Data"; btn.disabled = false;
+                badge.innerText = "EDITING SAVED DATA"; badge.style.background = "#fef08a"; badge.style.color = "#854d0e";
             } else {
-                btn.style.display = 'block';
-                btn.innerText = "Submit Data";
-                btn.disabled = false;
-                
-                badge.innerText = "PENDING ENTRY";
-                badge.style.background = "#fee2e2";
-                badge.style.color = "#991b1b";
+                btn.style.display = 'block'; btn.innerText = "Submit Data"; btn.disabled = false;
+                badge.innerText = "PENDING ENTRY"; badge.style.background = "#fee2e2"; badge.style.color = "#991b1b";
             }
-
         } catch (error) {
-            console.error("Error fetching data:", error);
-            btn.innerText = "Submit Data";
-            btn.disabled = false;
+            console.error("Error:", error); btn.innerText = "Submit Data"; btn.disabled = false;
         }
     }
 
@@ -308,54 +374,92 @@
         if (!dateStr) return alert("Select Date");
         
         const btn = document.getElementById('submit-btn');
-        btn.innerText = "Saving...";
-        btn.disabled = true;
+        btn.innerText = "Saving..."; btn.disabled = true;
 
         let payload = { date: dateStr }; 
-        
         if(currentUser === 'purchase') {
-            payload.purchase = { 
-                food: Number(document.getElementById('p_fooditems').value), 
-                nonfood: Number(document.getElementById('p_nonfood').value), 
-                promoter: Number(document.getElementById('p_promoters').value), 
-                hwp: Number(document.getElementById('p_hwp').value) 
-            };
+            payload.purchase = { food: Number(document.getElementById('p_fooditems').value), nonfood: Number(document.getElementById('p_nonfood').value), promoter: Number(document.getElementById('p_promoters').value), hwp: Number(document.getElementById('p_hwp').value) };
         } else if(currentUser === 'sales') {
-            payload.sales = { 
-                food: Number(document.getElementById('s_fooditems').value), 
-                nonfood: Number(document.getElementById('s_nonfood').value), 
-                promoter: Number(document.getElementById('s_promoters').value), 
-                hwp: Number(document.getElementById('s_hwp').value),
-                profit: Number(document.getElementById('s_profit').value),
-                voucher: Number(document.getElementById('s_voucher').value)
-            };
+            payload.sales = { food: Number(document.getElementById('s_fooditems').value), nonfood: Number(document.getElementById('s_nonfood').value), promoter: Number(document.getElementById('s_promoters').value), hwp: Number(document.getElementById('s_hwp').value), profit: Number(document.getElementById('s_profit').value), voucher: Number(document.getElementById('s_voucher').value) };
         } else if(currentUser === 'accounts') {
-            payload.accounts = { 
-                balance: Number(document.getElementById('acc_bal').value), 
-                issued: Number(document.getElementById('acc_iss').value) 
-            };
+            payload.accounts = { balance: Number(document.getElementById('acc_bal').value), issued: Number(document.getElementById('acc_iss').value) };
         } else if(currentUser === 'dataentry') {
-            payload.billing = { 
-                entered: Number(document.getElementById('de_ent').value), 
-                pending: Number(document.getElementById('de_pen').value), 
-                fvDump: Number(document.getElementById('de_fvdump').value),
-                totalPur: Number(document.getElementById('de_total_pur').value) 
-            };
+            payload.billing = { entered: Number(document.getElementById('de_ent').value), pending: Number(document.getElementById('de_pen').value), fvDump: Number(document.getElementById('de_fvdump').value), totalPur: Number(document.getElementById('de_total_pur').value) };
         }
 
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
-
         try {
             await setDoc(doc(db, collectionName, dateStr), payload, { merge: true });
             alert('Data Successfully Saved to Cloud!');
             checkExistingData(); 
         } catch (e) {
-            console.error(e);
-            alert("Error saving data. Check connection.");
-            btn.innerText = "Submit Data";
-            btn.disabled = false;
+            console.error(e); alert("Error saving data.");
+            btn.innerText = "Submit Data"; btn.disabled = false;
         }
     });
+
+    // --- REPORT LOGIC FOR PURCHASE USER ---
+    window.openReport = () => {
+        document.getElementById('report-modal').style.display = 'flex';
+        fetchReportData();
+    }
+    
+    window.closeReport = () => {
+        document.getElementById('report-modal').style.display = 'none';
+    }
+
+    async function fetchReportData() {
+        const dateStr = document.getElementById('entry_date').value;
+        if (!dateStr) return;
+        
+        const selectedDate = new Date(dateStr);
+        const currentMonthTag = monthNames[selectedDate.getMonth()];
+        document.querySelectorAll('.dyn-month').forEach(badge => { badge.innerText = currentMonthTag; });
+        
+        const monthStartStr = dateStr.substring(0, 8) + '01';
+        const label = document.getElementById('report-date-label');
+        label.innerText = `Till ${dateStr.split('-').reverse().join('/')}`;
+        
+        const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
+
+        try {
+            const q = query(collection(db, collectionName), where("date", ">=", monthStartStr), where("date", "<=", dateStr));
+            const snapshot = await getDocs(q);
+
+            let sum = { f_s:0, f_p:0, nf_s:0, nf_p:0, pr_s:0, pr_p:0, hwp_s:0, hwp_p:0 };
+
+            snapshot.forEach(doc => {
+                let data = doc.data();
+                sum.f_s += Number(data.sales?.food || 0); sum.f_p += Number(data.purchase?.food || 0);
+                sum.nf_s += Number(data.sales?.nonfood || 0); sum.nf_p += Number(data.purchase?.nonfood || 0);
+                sum.pr_s += Number(data.sales?.promoter || 0); sum.pr_p += Number(data.purchase?.promoter || 0);
+                sum.hwp_s += Number(data.sales?.hwp || 0); sum.hwp_p += Number(data.purchase?.hwp || 0);
+            });
+
+            updateReportTile('r_f', sum.f_s, sum.f_p);
+            updateReportTile('r_nf', sum.nf_s, sum.nf_p);
+            updateReportTile('r_pr', sum.pr_s, sum.pr_p);
+            updateReportTile('r_hwp', sum.hwp_s, sum.hwp_p);
+        } catch (e) {
+            console.error("Firebase Report Error: ", e);
+            label.innerText = "Error loading data";
+            label.style.color = "var(--g-red)";
+        }
+    }
+
+    function updateReportTile(id, s, p) {
+        document.getElementById(`${id}-s`).innerText = Number(s || 0).toLocaleString('en-IN');
+        document.getElementById(`${id}-p`).innerText = Number(p || 0).toLocaleString('en-IN');
+        const diff = s - p;
+        const diffEl = document.getElementById(`${id}-diff`);
+        diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + Number(Math.abs(diff)).toLocaleString('en-IN');
+        diffEl.style.color = diff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+
+        const bar = document.getElementById(`${id}-bar`);
+        let pct = p > 0 ? (s / p) * 100 : (s > 0 ? 100 : 0);
+        bar.style.width = Math.min(pct, 100) + '%';
+        bar.style.backgroundColor = s >= p ? 'var(--g-green)' : 'var(--g-red)';
+    }
 </script>
 
 <script>
