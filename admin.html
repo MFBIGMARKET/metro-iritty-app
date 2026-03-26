@@ -460,15 +460,14 @@
 
     function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
 
-    // History Logic (Clean Table)
+    // History Logic (Reverse Order & Color Tints)
     window.openHistory = (catKey, catName) => {
         document.getElementById('hist-cat-title').innerText = catName;
         const container = document.getElementById('hist-list');
         
-        const selectedStr = datePicker.value;
+        const selectedStr = datePicker.value; // Note: if updating update.html, this is document.getElementById('entry_date').value
         const [yy, mm, dd] = selectedStr.split('-');
         
-        // Loop stops at Yesterday (dd - 1)
         const loopEnd = parseInt(dd) - 1; 
         
         let html = `
@@ -483,8 +482,8 @@
                 <tbody>
         `;
         
-        // Loop from 1st of the month to Yesterday
-        for(let i = 1; i <= loopEnd; i++) {
+        // REVERSED LOOP: Starts from yesterday (loopEnd) and goes down to 1
+        for(let i = loopEnd; i >= 1; i--) {
             let checkDate = `${yy}-${mm}-${String(i).padStart(2, '0')}`;
             let dayData = window.monthDataMap[checkDate];
             let displayDate = `${String(i).padStart(2, '0')} ${monthNames[parseInt(mm)-1]}`;
@@ -501,8 +500,18 @@
                     </tr>
                 `;
             } else {
+                // TINT LOGIC
+                let tintStyle = "";
+                let diff = (s || 0) - (p || 0);
+                
+                if (diff < 0) {
+                    tintStyle = "style='background-color: #fef2f2;'"; // Soft Red 
+                } else if (diff > 0) {
+                    tintStyle = "style='background-color: #f0fdf4;'"; // Soft Green 
+                }
+                
                 html += `
-                    <tr>
+                    <tr ${tintStyle}>
                         <td>${displayDate}</td>
                         <td>${formatAmt(s)}</td>
                         <td>${formatAmt(p)}</td>
