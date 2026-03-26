@@ -25,7 +25,9 @@
         .card { background: var(--card); padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         select, input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid transparent; background: #f1f5f9; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.3s; }
         select:focus, input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
-        input[readonly] { background: #e2e8f0; color: #475569; cursor: not-allowed; } 
+        
+        input.locked { background: #e2e8f0; color: #64748b; border-color: #cbd5e1; pointer-events: none; }
+        
         .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 4px; flex-shrink: 0; }
         .btn:active { transform: scale(0.98); }
 
@@ -54,31 +56,56 @@
         .input-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase; }
         .input-group input { margin-bottom: 0; }
         
-        /* Settings Modal */
-        #settings-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; animation: fadeUp 0.2s ease; }
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; animation: fadeUp 0.2s ease; }
         .modal-card { background: #fff; width: 85%; max-width: 320px; padding: 24px; border-radius: 24px; text-align: center; }
         .modal-card h3 { justify-content: center; margin-bottom: 16px; }
 
-        /* Report Modal (Admin Dashboard Clone) */
+        /* Report Modal */
         #report-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--surface); z-index: 200; flex-direction: column; animation: fadeUp 0.3s ease; }
         .report-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .report-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .cat-card { background: var(--card); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; min-height: 120px; }
+        .cat-card { background: var(--card); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #f1f5f9; min-height: 120px; cursor: pointer; transition: 0.1s;}
+        .cat-card:active { transform: scale(0.98); }
+        
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
         .cat-title-group { display: flex; align-items: center; gap: 6px; }
         .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
         .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
         .cat-diff { font-size: 18px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
-        .progress-container { height: 4px; background: #f1f5f9; border-radius: 2px; margin: 6px 0; overflow: hidden; }
-        .progress-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.8s ease; }
-        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 4px; }
+        .progress-container { height: 2px; background: #f1f5f9; border-radius: 1px; margin: 4px 0; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; border-radius: 1px; transition: width 0.8s ease; }
+        
+        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; gap: 4px; }
         .stat-item { display: flex; flex-direction: column; overflow: hidden; }
         .sp-char { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 1px; }
         .sp-val { font-size: 11px; font-weight: 800; color: #000000; letter-spacing: -0.5px; white-space: nowrap; }
 
+        /* Clean Table History Modal */
+        #history-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 300; flex-direction: column; animation: slideUp 0.3s ease;}
+        .history-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #fff; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); z-index: 20;}
+        .history-content { flex: 1; overflow-y: auto; padding: 0; background: #fff; }
+        
+        .history-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .history-table th { 
+            position: sticky; top: 0; background: #f8fafc; color: var(--text-muted); 
+            font-size: 10px; font-weight: 800; padding: 12px 8px; 
+            border-bottom: 1px solid var(--border); text-transform: uppercase; z-index: 10;
+        }
+        
+        .history-table th:nth-child(1), .history-table td:nth-child(1) { width: 25%; text-align: left; padding-left: 16px; }
+        .history-table th:nth-child(2), .history-table td:nth-child(2) { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
+        .history-table th:nth-child(3), .history-table td:nth-child(3) { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
+        
+        .history-table td { padding: 14px 8px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-weight: 700; color: var(--text-dark); }
+        .history-table td:first-child { color: var(--text-muted); font-size: 11px; }
+
+        .history-table td.missing-cell { color: var(--g-red); font-weight: 800; }
+
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -93,6 +120,7 @@
         <div class="card">
             <select id="user-role">
                 <option value="purchase">Purchase Department</option>
+                <option value="hwp">HWP Department</option>
                 <option value="sales">Sales Department</option>
                 <option value="accounts">Accounts Department</option>
                 <option value="dataentry">Data Entry Department</option>
@@ -103,7 +131,7 @@
     </div>
 
     <!-- Settings Modal -->
-    <div id="settings-modal">
+    <div id="settings-modal" class="modal-overlay">
         <div class="modal-card">
             <h3>Select Branch</h3>
             <select id="branch-select">
@@ -115,7 +143,19 @@
         </div>
     </div>
 
-    <!-- Dashboard/Report Modal -->
+    <!-- Custom Unlock Modal -->
+    <div id="unlock-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3>Unlock Edit Mode</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Enter admin password to modify submitted data.</p>
+            <input type="password" id="unlock-pass" placeholder="Enter Password">
+            <p id="unlock-error" style="color:var(--g-red); font-size:11px; display:none; margin-top:-5px; margin-bottom:10px; font-weight:700;">Incorrect Password</p>
+            <button class="btn" id="confirm-unlock-btn" style="background:var(--g-yellow); color:#000;">Unlock Fields</button>
+            <button class="btn" style="background:#f1f5f9; color:#0f172a; margin-top:8px;" onclick="closeUnlockModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
     <div id="report-modal">
         <div class="report-header">
             <div>
@@ -127,40 +167,56 @@
         <div class="report-content">
             <div class="cat-grid">
                 <!-- FOOD -->
-                <div class="cat-card">
+                <div class="cat-card" id="rep-card-f" onclick="openHistory('food', 'FOOD ITEMS')">
                     <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge dyn-month">MON</span></div></div>
                     <div class="cat-diff" id="r_f-diff">₹0</div>
                     <div class="progress-container"><div id="r_f-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_f-stock">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_f-limit">0</span></div>
+                    </div>
                     <div class="cat-stats">
                         <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_f-s">0</span></div>
                         <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_f-p">0</span></div>
                     </div>
                 </div>
                 <!-- NON-FOOD -->
-                <div class="cat-card">
+                <div class="cat-card" id="rep-card-nf" onclick="openHistory('nonfood', 'NON-FOOD')">
                     <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge dyn-month">MON</span></div></div>
                     <div class="cat-diff" id="r_nf-diff">₹0</div>
                     <div class="progress-container"><div id="r_nf-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_nf-stock">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_nf-limit">0</span></div>
+                    </div>
                     <div class="cat-stats">
                         <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_nf-s">0</span></div>
                         <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_nf-p">0</span></div>
                     </div>
                 </div>
                 <!-- PROMOTER -->
-                <div class="cat-card">
+                <div class="cat-card" id="rep-card-pr" onclick="openHistory('promoter', 'PROMOTERS')">
                     <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge dyn-month">MON</span></div></div>
                     <div class="cat-diff" id="r_pr-diff">₹0</div>
                     <div class="progress-container"><div id="r_pr-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_pr-stock">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_pr-limit">0</span></div>
+                    </div>
                     <div class="cat-stats">
                         <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_pr-s">0</span></div>
                         <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_pr-p">0</span></div>
                     </div>
                 </div>
                 <!-- HWP -->
-                <div class="cat-card">
+                <div class="cat-card" id="rep-card-hwp" onclick="openHistory('hwp', 'HWP')">
                     <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge dyn-month">MON</span></div></div>
                     <div class="cat-diff" id="r_hwp-diff">₹0</div>
                     <div class="progress-container"><div id="r_hwp-bar" class="progress-bar"></div></div>
+                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_hwp-stock">0</span></div>
+                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_hwp-limit">0</span></div>
+                    </div>
                     <div class="cat-stats">
                         <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_hwp-s">0</span></div>
                         <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_hwp-p">0</span></div>
@@ -170,11 +226,24 @@
         </div>
     </div>
 
+    <!-- History Modal -->
+    <div id="history-modal">
+        <div class="history-header">
+            <div>
+                <h2 id="hist-cat-title" style="margin:0; font-size:16px; font-weight:800;">Category</h2>
+                <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Daily History</span>
+            </div>
+            <button class="settings-btn" style="background:#fee2e2; color:#ef4444; border:none; border-radius:8px; width:32px; height:32px; cursor:pointer;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
+        </div>
+        <div class="history-content" id="hist-list">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
     <div id="app-screen">
         <header>
             <div class="role-badge"><span id="app-branch-badge">Metro Iritty</span><strong id="display-role">Role</strong></div>
             <div class="header-actions">
-                <!-- Report Button (Hidden by default, shown only for purchase) -->
                 <button class="action-btn" id="report-btn" style="background:#e0e7ff; color:#3730a3; display:none;" onclick="openReport()"><i class="material-icons-round" style="font-size:18px;">analytics</i></button>
                 <button class="action-btn" style="background:#f1f5f9; color:#475569;" onclick="openSettings()"><i class="material-icons-round" style="font-size:18px;">settings</i></button>
                 <button class="action-btn" id="logout-btn" style="background:#fee2e2; color:#ef4444;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
@@ -186,6 +255,8 @@
         </div>
         <div class="form-card">
             <div id="form-content"></div>
+            <!-- Unlock / Submit Buttons -->
+            <button class="btn" id="unlock-btn" style="display:none; background:#f59e0b; margin-top: 12px; color:#000;"><i class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">lock</i> Unlock to Edit</button>
             <button class="btn" id="submit-btn" style="margin-top: 12px;">Submit Data</button>
         </div>
     </div>
@@ -193,6 +264,8 @@
 
 <!-- Firebase SDKs -->
 <script type="module">
+    window.monthDataMap = {}; // Global Map for History table
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
@@ -211,6 +284,7 @@
     // --- Branch Settings Logic ---
     let currentBranch = localStorage.getItem('update_branch') || 'iritty';
     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    let existingDocData = {}; 
     
     function updateBranchDisplay() {
         document.getElementById('login-app-title').innerText = currentBranch === 'iritty' ? 'Metro Iritty' : 'Metro Mtr';
@@ -230,13 +304,13 @@
         closeSettings();
         checkExistingData(); 
     }
-    // -----------------------------
 
     const ROLES = {
-        purchase: { pass: "pur123", label: "YESTERDAY'S PURCHASE", default: 'yest' },
-        sales: { pass: "sale456", label: "YESTERDAY'S SALES", default: 'yest' },
-        accounts: { pass: "acc789", label: "TODAY'S ACCOUNTS", default: 'today' },
-        dataentry: { pass: "data000", label: "TODAY'S DATA ENTRY", default: 'today' }
+        purchase: { pass: "pur123", label: "PURCHASE ENTRY", default: 'yest' },
+        hwp: { pass: "hwp111", label: "HWP ENTRY", default: 'yest' },
+        sales: { pass: "sale456", label: "SALES ENTRY", default: 'yest' },
+        accounts: { pass: "acc789", label: "ACCOUNTS ENTRY", default: 'today' },
+        dataentry: { pass: "data000", label: "DATA ENTRY", default: 'today' }
     };
 
     let currentUser = localStorage.getItem('sm_session');
@@ -260,10 +334,9 @@
         currentUser = role;
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app-screen').style.display = 'flex';
-        document.getElementById('display-role').innerText = role;
+        document.getElementById('display-role').innerText = role === 'hwp' ? 'HWP' : role;
         
-        // Show Report Button ONLY for purchase user
-        if (role === 'purchase') {
+        if (role === 'purchase' || role === 'hwp') {
             document.getElementById('report-btn').style.display = 'flex';
         }
         
@@ -271,10 +344,7 @@
         const d = new Date();
         if(ROLES[role].default === 'yest') d.setDate(d.getDate() - 1);
         
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const dd = String(d.getDate()).padStart(2, '0');
-        dateInput.value = `${yyyy}-${mm}-${dd}`;
+        dateInput.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         
         renderForm(role);
         checkExistingData();
@@ -283,18 +353,20 @@
     function renderForm(role) {
         let html = `<h3 id="form-title">${ROLES[role].label} <span id="status-badge" style="font-size:10px; padding:4px 8px; border-radius:6px; font-weight:800;"></span></h3>`;
         if(role === 'purchase') {
-            ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
+            ['Food Items','Non-Food','Promoters'].forEach(cat => {
                 html += `<div class="input-group"><label>${cat}</label><input type="number" id="p_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
             });
+        } else if (role === 'hwp') {
+            html += `<div class="input-group"><label>HWP</label><input type="number" id="p_hwp" placeholder="0"></div>`;
         } else if(role === 'sales') {
             ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
                 html += `<div class="input-group"><label>${cat}</label><input type="number" id="s_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
             });
             html += `<div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#10b981">Overall Profit</label><input type="number" id="s_profit" placeholder="₹0"></div>`;
-            html += `<div class="input-group"><label style="color:#ef4444">Total Voucher</label><input type="number" id="s_voucher" placeholder="₹0"></div>`;
         } else if(role === 'accounts') {
             html += `<div class="input-group"><label>Bank Balance</label><input type="number" id="acc_bal" placeholder="₹0"></div>
-                     <div class="input-group"><label>Issued Amount</label><input type="number" id="acc_iss" placeholder="₹0"></div>`;
+                     <div class="input-group"><label>Issued Amount</label><input type="number" id="acc_iss" placeholder="₹0"></div>
+                     <div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#ef4444">Total Voucher</label><input type="number" id="acc_voucher" placeholder="₹0"></div>`;
         } else if(role === 'dataentry') {
             html += `<div class="input-group"><label>Bills Entered</label><input type="number" id="de_ent" placeholder="0"></div>
                      <div class="input-group"><label>Bills Pending</label><input type="number" id="de_pen" placeholder="0"></div>
@@ -309,11 +381,11 @@
         if (!dateStr || !currentUser) return;
 
         const btn = document.getElementById('submit-btn');
+        const unlockBtn = document.getElementById('unlock-btn');
         const badge = document.getElementById('status-badge');
         
-        btn.innerText = "Checking...";
-        btn.disabled = true;
-        badge.innerText = "";
+        btn.innerText = "Checking..."; btn.disabled = true; badge.innerText = "";
+        unlockBtn.style.display = 'none';
 
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
 
@@ -323,16 +395,27 @@
             
             let hasData = false;
             let data = {};
+            existingDocData = docSnap.exists() ? docSnap.data() : {};
 
             if (docSnap.exists()) {
-                const fullData = docSnap.data();
-                let dbKey = currentUser === 'dataentry' ? 'billing' : currentUser;
-                if (fullData[dbKey]) { hasData = true; data = fullData[dbKey]; }
+                let dbKey = currentUser === 'dataentry' ? 'billing' : (currentUser === 'hwp' ? 'purchase' : currentUser);
+                if (existingDocData[dbKey]) {
+                    if(currentUser === 'hwp') {
+                        if(existingDocData.purchase.hwp !== undefined) { hasData = true; data = existingDocData.purchase; }
+                    } else if (currentUser === 'purchase') {
+                        if(existingDocData.purchase.food !== undefined || existingDocData.purchase.nonfood !== undefined || existingDocData.purchase.promoter !== undefined) {
+                            hasData = true; data = existingDocData.purchase;
+                        }
+                    } else {
+                        hasData = true; data = existingDocData[dbKey];
+                    }
+                }
             }
 
-            document.querySelectorAll('#form-content input').forEach(inp => {
-                inp.value = '';
-                inp.readOnly = false; 
+            document.querySelectorAll('#form-content input').forEach(inp => { 
+                inp.value = ''; 
+                inp.classList.remove('locked');
+                inp.readOnly = false;
             });
 
             if (hasData) {
@@ -340,6 +423,7 @@
                     document.getElementById('p_fooditems').value = data.food || '';
                     document.getElementById('p_nonfood').value = data.nonfood || '';
                     document.getElementById('p_promoters').value = data.promoter || '';
+                } else if (currentUser === 'hwp') {
                     document.getElementById('p_hwp').value = data.hwp || '';
                 } else if(currentUser === 'sales') {
                     document.getElementById('s_fooditems').value = data.food || '';
@@ -347,10 +431,10 @@
                     document.getElementById('s_promoters').value = data.promoter || '';
                     document.getElementById('s_hwp').value = data.hwp || '';
                     document.getElementById('s_profit').value = data.profit || '';
-                    document.getElementById('s_voucher').value = data.voucher || '';
                 } else if(currentUser === 'accounts') {
                     document.getElementById('acc_bal').value = data.balance || '';
                     document.getElementById('acc_iss').value = data.issued || '';
+                    document.getElementById('acc_voucher').value = data.voucher || existingDocData?.sales?.voucher || '';
                 } else if(currentUser === 'dataentry') {
                     document.getElementById('de_ent').value = data.entered || '';
                     document.getElementById('de_pen').value = data.pending || '';
@@ -358,16 +442,56 @@
                     document.getElementById('de_total_pur').value = data.totalPur || '';
                 }
                 
-                btn.style.display = 'block'; btn.innerText = "Update Data"; btn.disabled = false;
-                badge.innerText = "EDITING SAVED DATA"; badge.style.background = "#fef08a"; badge.style.color = "#854d0e";
+                document.querySelectorAll('#form-content input').forEach(inp => { 
+                    inp.classList.add('locked');
+                    inp.readOnly = true;
+                });
+
+                btn.style.display = 'none'; 
+                unlockBtn.style.display = 'block';
+                badge.innerText = "LOCKED"; 
+                badge.style.background = "#e2e8f0"; badge.style.color = "#475569";
             } else {
                 btn.style.display = 'block'; btn.innerText = "Submit Data"; btn.disabled = false;
                 badge.innerText = "PENDING ENTRY"; badge.style.background = "#fee2e2"; badge.style.color = "#991b1b";
             }
-        } catch (error) {
-            console.error("Error:", error); btn.innerText = "Submit Data"; btn.disabled = false;
-        }
+        } catch (error) { console.error(error); btn.innerText = "Submit Data"; btn.disabled = false; }
     }
+
+    // --- Unlock Edit Modal Logic ---
+    window.closeUnlockModal = () => {
+        document.getElementById('unlock-modal').style.display = 'none';
+        document.getElementById('unlock-pass').value = '';
+        document.getElementById('unlock-error').style.display = 'none';
+    }
+
+    document.getElementById('unlock-btn').addEventListener('click', () => {
+        document.getElementById('unlock-modal').style.display = 'flex';
+        document.getElementById('unlock-pass').value = '';
+        document.getElementById('unlock-error').style.display = 'none';
+    });
+
+    document.getElementById('confirm-unlock-btn').addEventListener('click', () => {
+        const pass = document.getElementById('unlock-pass').value;
+        if (pass === "Edit#213") {
+            closeUnlockModal();
+            document.querySelectorAll('#form-content input').forEach(inp => { 
+                inp.classList.remove('locked');
+                inp.readOnly = false;
+            });
+            document.getElementById('unlock-btn').style.display = 'none';
+            const btn = document.getElementById('submit-btn');
+            btn.style.display = 'block';
+            btn.innerText = "Update Data";
+            btn.disabled = false;
+            
+            const badge = document.getElementById('status-badge');
+            badge.innerText = "EDITING"; 
+            badge.style.background = "#fef08a"; badge.style.color = "#854d0e";
+        } else {
+            document.getElementById('unlock-error').style.display = 'block';
+        }
+    });
 
     document.getElementById('submit-btn').addEventListener('click', async () => {
         const dateStr = document.getElementById('entry_date').value;
@@ -377,12 +501,16 @@
         btn.innerText = "Saving..."; btn.disabled = true;
 
         let payload = { date: dateStr }; 
+        let existingPurchase = existingDocData.purchase || {};
+        
         if(currentUser === 'purchase') {
-            payload.purchase = { food: Number(document.getElementById('p_fooditems').value), nonfood: Number(document.getElementById('p_nonfood').value), promoter: Number(document.getElementById('p_promoters').value), hwp: Number(document.getElementById('p_hwp').value) };
+            payload.purchase = { ...existingPurchase, food: Number(document.getElementById('p_fooditems').value), nonfood: Number(document.getElementById('p_nonfood').value), promoter: Number(document.getElementById('p_promoters').value) };
+        } else if(currentUser === 'hwp') {
+            payload.purchase = { ...existingPurchase, hwp: Number(document.getElementById('p_hwp').value) };
         } else if(currentUser === 'sales') {
-            payload.sales = { food: Number(document.getElementById('s_fooditems').value), nonfood: Number(document.getElementById('s_nonfood').value), promoter: Number(document.getElementById('s_promoters').value), hwp: Number(document.getElementById('s_hwp').value), profit: Number(document.getElementById('s_profit').value), voucher: Number(document.getElementById('s_voucher').value) };
+            payload.sales = { food: Number(document.getElementById('s_fooditems').value), nonfood: Number(document.getElementById('s_nonfood').value), promoter: Number(document.getElementById('s_promoters').value), hwp: Number(document.getElementById('s_hwp').value), profit: Number(document.getElementById('s_profit').value) };
         } else if(currentUser === 'accounts') {
-            payload.accounts = { balance: Number(document.getElementById('acc_bal').value), issued: Number(document.getElementById('acc_iss').value) };
+            payload.accounts = { balance: Number(document.getElementById('acc_bal').value), issued: Number(document.getElementById('acc_iss').value), voucher: Number(document.getElementById('acc_voucher').value) };
         } else if(currentUser === 'dataentry') {
             payload.billing = { entered: Number(document.getElementById('de_ent').value), pending: Number(document.getElementById('de_pen').value), fvDump: Number(document.getElementById('de_fvdump').value), totalPur: Number(document.getElementById('de_total_pur').value) };
         }
@@ -393,79 +521,143 @@
             alert('Data Successfully Saved to Cloud!');
             checkExistingData(); 
         } catch (e) {
-            console.error(e); alert("Error saving data.");
-            btn.innerText = "Submit Data"; btn.disabled = false;
+            console.error(e); alert("Error saving data."); btn.innerText = "Submit Data"; btn.disabled = false;
         }
     });
 
-    // --- REPORT LOGIC FOR PURCHASE USER ---
+    // --- REPORT LOGIC ---
     window.openReport = () => {
         document.getElementById('report-modal').style.display = 'flex';
+        if(currentUser === 'purchase') {
+            document.getElementById('rep-card-hwp').style.display = 'none';
+            document.getElementById('rep-card-f').style.display = 'flex';
+            document.getElementById('rep-card-nf').style.display = 'flex';
+            document.getElementById('rep-card-pr').style.display = 'flex';
+        } else if (currentUser === 'hwp') {
+            document.getElementById('rep-card-f').style.display = 'none';
+            document.getElementById('rep-card-nf').style.display = 'none';
+            document.getElementById('rep-card-pr').style.display = 'none';
+            document.getElementById('rep-card-hwp').style.display = 'flex';
+        }
         fetchReportData();
     }
-    
-    window.closeReport = () => {
-        document.getElementById('report-modal').style.display = 'none';
-    }
+    window.closeReport = () => { document.getElementById('report-modal').style.display = 'none'; }
 
     async function fetchReportData() {
         const dateStr = document.getElementById('entry_date').value;
         if (!dateStr) return;
         
         const selectedDate = new Date(dateStr);
-        const currentMonthTag = monthNames[selectedDate.getMonth()];
-        document.querySelectorAll('.dyn-month').forEach(badge => { badge.innerText = currentMonthTag; });
+        document.querySelectorAll('.dyn-month').forEach(badge => { badge.innerText = monthNames[selectedDate.getMonth()]; });
         
         const monthStartStr = dateStr.substring(0, 8) + '01';
-        const label = document.getElementById('report-date-label');
-        label.innerText = `Till ${dateStr.split('-').reverse().join('/')}`;
+        document.getElementById('report-date-label').innerText = `Till ${dateStr.split('-').reverse().join('/')}`;
         
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
+        window.monthDataMap = {}; 
 
         try {
-            const q = query(collection(db, collectionName), where("date", ">=", monthStartStr), where("date", "<=", dateStr));
-            const snapshot = await getDocs(q);
+            const setSnap = await getDoc(doc(db, "branch_settings", currentBranch));
+            let sets = setSnap.exists() ? setSnap.data() : {};
+            const osDateStr = sets.os_date || monthStartStr;
+            const queryStart = (osDateStr < monthStartStr) ? osDateStr : monthStartStr;
 
+            const q = query(collection(db, collectionName), where("date", ">=", queryStart), where("date", "<=", dateStr));
+            const snapshot = await getDocs(q);
             let sum = { f_s:0, f_p:0, nf_s:0, nf_p:0, pr_s:0, pr_p:0, hwp_s:0, hwp_p:0 };
+            let stockDiff = { f:0, nf:0, pr:0, hwp:0 };
 
             snapshot.forEach(doc => {
                 let data = doc.data();
-                sum.f_s += Number(data.sales?.food || 0); sum.f_p += Number(data.purchase?.food || 0);
-                sum.nf_s += Number(data.sales?.nonfood || 0); sum.nf_p += Number(data.purchase?.nonfood || 0);
-                sum.pr_s += Number(data.sales?.promoter || 0); sum.pr_p += Number(data.purchase?.promoter || 0);
-                sum.hwp_s += Number(data.sales?.hwp || 0); sum.hwp_p += Number(data.purchase?.hwp || 0);
+                
+                if(data.date >= monthStartStr) {
+                    window.monthDataMap[data.date] = data; // For history
+                    
+                    sum.f_s += Number(data.sales?.food || 0); sum.f_p += Number(data.purchase?.food || 0);
+                    sum.nf_s += Number(data.sales?.nonfood || 0); sum.nf_p += Number(data.purchase?.nonfood || 0);
+                    sum.pr_s += Number(data.sales?.promoter || 0); sum.pr_p += Number(data.purchase?.promoter || 0);
+                    sum.hwp_s += Number(data.sales?.hwp || 0); sum.hwp_p += Number(data.purchase?.hwp || 0);
+                }
+
+                if(data.date >= osDateStr) {
+                    stockDiff.f += Number(data.purchase?.food || 0) - Number(data.sales?.food || 0);
+                    stockDiff.nf += Number(data.purchase?.nonfood || 0) - Number(data.sales?.nonfood || 0);
+                    stockDiff.pr += Number(data.purchase?.promoter || 0) - Number(data.sales?.promoter || 0);
+                    stockDiff.hwp += Number(data.purchase?.hwp || 0) - Number(data.sales?.hwp || 0);
+                }
             });
 
-            updateReportTile('r_f', sum.f_s, sum.f_p);
-            updateReportTile('r_nf', sum.nf_s, sum.nf_p);
-            updateReportTile('r_pr', sum.pr_s, sum.pr_p);
-            updateReportTile('r_hwp', sum.hwp_s, sum.hwp_p);
-        } catch (e) {
-            console.error("Firebase Report Error: ", e);
-            label.innerText = "Error loading data";
-            label.style.color = "var(--g-red)";
-        }
+            updateReportTile('r_f', sum.f_s, sum.f_p, sets.f_o, sets.f_l, stockDiff.f);
+            updateReportTile('r_nf', sum.nf_s, sum.nf_p, sets.nf_o, sets.nf_l, stockDiff.nf);
+            updateReportTile('r_pr', sum.pr_s, sum.pr_p, sets.pr_o, sets.pr_l, stockDiff.pr);
+            updateReportTile('r_hwp', sum.hwp_s, sum.hwp_p, sets.hwp_o, sets.hwp_l, stockDiff.hwp);
+        } catch (e) { console.error(e); }
     }
 
-    function updateReportTile(id, s, p) {
-        document.getElementById(`${id}-s`).innerText = Number(s || 0).toLocaleString('en-IN');
-        document.getElementById(`${id}-p`).innerText = Number(p || 0).toLocaleString('en-IN');
+    function updateReportTile(id, s, p, open, limit, stockAccumulatedDiff) {
+        document.getElementById(`${id}-s`).innerText = formatAmt(s);
+        document.getElementById(`${id}-p`).innerText = formatAmt(p);
         const diff = s - p;
         const diffEl = document.getElementById(`${id}-diff`);
-        diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + Number(Math.abs(diff)).toLocaleString('en-IN');
+        diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(diff));
         diffEl.style.color = diff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
 
         const bar = document.getElementById(`${id}-bar`);
         let pct = p > 0 ? (s / p) * 100 : (s > 0 ? 100 : 0);
         bar.style.width = Math.min(pct, 100) + '%';
         bar.style.backgroundColor = s >= p ? 'var(--g-green)' : 'var(--g-red)';
+
+        const stock = (open || 0) + stockAccumulatedDiff;
+        const stockEl = document.getElementById(`${id}-stock`);
+        document.getElementById(`${id}-limit`).innerText = formatAmt(limit || 0);
+        stockEl.innerText = formatAmt(stock);
+        if(stock < (limit || 0)) { stockEl.style.color = 'var(--g-green)'; } 
+        else if (stock > (limit || 0)) { stockEl.style.color = 'var(--g-red)'; } 
+        else { stockEl.style.color = 'var(--text-muted)'; }
     }
+
+    function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
+
+    // --- History Logic ---
+    window.openHistory = (catKey, catName) => {
+        document.getElementById('hist-cat-title').innerText = catName;
+        const container = document.getElementById('hist-list');
+        
+        const selectedStr = document.getElementById('entry_date').value;
+        const [yy, mm, dd] = selectedStr.split('-');
+        const loopEnd = parseInt(dd) - 1; 
+        
+        let html = `
+            <table class="history-table">
+                <thead><tr><th>Date</th><th>Sale</th><th>Purch</th></tr></thead>
+                <tbody>
+        `;
+        
+        for(let i = 1; i <= loopEnd; i++) {
+            let checkDate = `${yy}-${mm}-${String(i).padStart(2, '0')}`;
+            let dayData = window.monthDataMap[checkDate];
+            let displayDate = `${String(i).padStart(2, '0')} ${monthNames[parseInt(mm)-1]}`;
+            
+            let s = dayData?.sales?.[catKey];
+            let p = dayData?.purchase?.[catKey];
+
+            if (s === undefined && p === undefined) {
+                html += `<tr><td>${displayDate}</td><td class="missing-cell">-</td><td class="missing-cell">-</td></tr>`;
+            } else {
+                html += `<tr><td>${displayDate}</td><td>${formatAmt(s)}</td><td>${formatAmt(p)}</td></tr>`;
+            }
+        }
+        
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+        document.getElementById('history-modal').style.display = 'flex';
+    }
+    
+    window.closeHistory = () => { document.getElementById('history-modal').style.display = 'none'; }
 </script>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
 </script>
 </body>
 </html>
