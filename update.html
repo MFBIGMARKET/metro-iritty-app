@@ -8,16 +8,18 @@
     <meta name="theme-color" content="#f8fafc">
     <link rel="apple-touch-icon" href="update-192.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root { --primary: #2563eb; --surface: #f8fafc; --card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; 
-                --g-green: #10b981; --g-red: #ef4444; }
+                --g-blue: #2563eb; --g-red: #ef4444; --g-green: #10b981; --g-yellow: #f59e0b; --text-dark: #0f172a;}
         *, *::before, *::after { box-sizing: border-box; }
-        body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--text-main); display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
-        .container { width: 100%; max-width: 450px; padding: 12px; display: flex; flex-direction: column; height: 100%; position: relative;}
+        body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--text-main); display: flex; justify-content: center; height: 100%; height: 100dvh; overflow: hidden; }
         
-        #login-screen { display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; animation: fadeUp 0.5s ease; padding-bottom: 10vh; }
+        .container { width: 100%; max-width: 450px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; height: 100%; padding: 10px; position: relative;}
+        
+        .login-container { display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; animation: fadeUp 0.5s ease; padding-bottom: 10vh; padding: 12px; max-width: 450px; margin: 0 auto; width: 100%;}
+        
         .app-logo { font-size: 48px; color: var(--primary); margin-bottom: 8px; background: #eff6ff; padding: 16px; border-radius: 24px; display: inline-block; }
         .app-title { font-weight: 800; font-size: 22px; margin: 0 0 4px 0; }
         .app-subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
@@ -25,63 +27,114 @@
         .card { background: var(--card); padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         select, input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid transparent; background: #f1f5f9; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.3s; }
         select:focus, input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
-        
         input.locked { background: #e2e8f0; color: #64748b; border-color: #cbd5e1; pointer-events: none; }
-        
         .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 4px; flex-shrink: 0; }
         .btn:active { transform: scale(0.98); }
 
-        #app-screen { display: none; flex-direction: column; height: 100%; gap: 8px; animation: fadeUp 0.4s ease; }
-        header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); flex-shrink: 0; }
-        .role-badge { display: flex; flex-direction: column; }
-        .role-badge span { font-size: 11px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .role-badge strong { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: capitalize; margin-top: 2px;}
+        #app-screen { display: none; flex-direction: column; height: 100%; animation: fadeUp 0.4s ease; padding-top: 4px; }
         
-        .header-actions { display: flex; gap: 8px; }
-        .action-btn { border: none; padding: 8px 10px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        /* Unified Header */
+        header { 
+            height: 52px; background: var(--card); padding: 0 16px; border-radius: 16px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; flex-shrink: 0; margin-bottom: 8px;
+        }
+        
+        .branch-dropdown { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 800; color: var(--text-dark); border: none; background: transparent; outline: none; cursor: pointer; padding: 0; letter-spacing: -0.5px; margin-bottom: 0; width: auto; appearance: auto;}
+        
+        .role-badge { display: flex; flex-direction: column; justify-content: center;}
+        .role-badge span { font-size: 11px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; display: block; line-height: 1;}
+        .role-badge strong { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: capitalize; line-height: 1;}
+        
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .header-actions input { border: none; color: var(--g-blue); font-family: inherit; font-weight: 700; font-size: 14px; outline: none; background: transparent; padding: 0; text-align: right; width: 115px; margin-bottom: 0;}
+        .action-btn { background: #f1f5f9; color: var(--text-muted); border: none; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; padding: 0;}
         .action-btn:active { transform: scale(0.95); }
 
-        .date-box { background: var(--card); padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); flex-shrink: 0; }
-        .date-box label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-        .date-box input { border: none; font-size: 15px; color: var(--text-main); background: transparent; padding: 0; margin: 0; width: auto; font-weight: 800; text-align: right; }
-        
+        /* Form Area */
+        #form-container { flex: 1; display: flex; flex-direction: column; min-height: 0; padding-bottom: 8px;}
         .form-card { background: white; padding: 16px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex: 1; display: flex; flex-direction: column; min-height: 0; }
         h3 { margin: 0 0 12px 0; font-weight: 800; font-size: 15px; color: var(--text-main); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         
         #form-content { flex: 1; overflow-y: auto; padding-right: 4px; }
         #form-content::-webkit-scrollbar { width: 4px; }
         #form-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
         .input-group { margin-bottom: 10px; }
         .input-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase; }
         .input-group input { margin-bottom: 0; }
-        
-        /* Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; animation: fadeUp 0.2s ease; }
-        .modal-card { background: #fff; width: 85%; max-width: 320px; padding: 24px; border-radius: 24px; text-align: center; }
-        .modal-card h3 { justify-content: center; margin-bottom: 16px; }
 
-        /* Report Modal */
-        #report-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--surface); z-index: 200; flex-direction: column; animation: fadeUp 0.3s ease; }
-        .report-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .report-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        /* Bottom Nav */
+        .bottom-nav { background: #fff; border-top: 1px solid var(--border); display: none; justify-content: space-around; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); flex-shrink: 0; border-radius: 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.02);}
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; transition: 0.2s; padding: 4px 12px; border-radius: 12px;}
+        .nav-item i { font-size: 22px; margin-bottom: 2px; }
+        .nav-item span { font-size: 10px; font-weight: 800; }
+        .nav-item.active { color: var(--primary); background: #eff6ff;}
+
+        /* Dashboard Container */
+        #dashboard-container { flex: 1; display: none; flex-direction: column; min-height: 0; padding-bottom: 8px; overflow-y: auto;}
+        .cat-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); gap: 8px; min-height: 0; }
         
-        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .cat-card { background: var(--card); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #f1f5f9; min-height: 120px; cursor: pointer; transition: 0.1s;}
+        .cat-card { background: var(--card); border-radius: 20px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; position: relative; overflow: hidden; cursor: pointer; transition: transform 0.1s;}
         .cat-card:active { transform: scale(0.98); }
+        .cat-card.no-click { cursor: default; transform: none; }
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
         .cat-title-group { display: flex; align-items: center; gap: 6px; }
-        .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .cat-label { font-size: 11px; font-weight: 900; color: #000000; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-muted); box-shadow: 0 0 4px rgba(0,0,0,0.1); flex-shrink: 0; margin-top: 4px;}
         .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
-        .cat-diff { font-size: 18px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
+        .month-badge.green { background: #dcfce7; color: #166534; }
+        .month-badge.red { background: #fee2e2; color: #991b1b; }
+        
+        .cat-diff { font-size: 16px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
         .progress-container { height: 2px; background: #f1f5f9; border-radius: 1px; margin: 4px 0; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; border-radius: 1px; transition: width 0.8s ease; }
         
-        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; gap: 4px; }
+        .cat-stats { display: flex; justify-content: space-between; align-items: flex-end; gap: 4px; margin-top: auto;}
         .stat-item { display: flex; flex-direction: column; overflow: hidden; }
         .sp-char { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 1px; }
         .sp-val { font-size: 11px; font-weight: 800; color: #000000; letter-spacing: -0.5px; white-space: nowrap; }
+
+        .tile-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .tile-icon i { font-size: 16px; }
+        .divider { padding-top: 4px; margin-top: auto; }
+
+        .profit-theme { background: #f0fdf4; border-color: #bbf7d0; }
+        .profit-theme .cat-label { color: #15803d; }
+        .profit-theme .tile-icon { background: #dcfce7; color: #15803d; }
+        .profit-theme .cat-diff, .profit-theme .sp-val { color: #15803d; }
+        .profit-theme .sp-char { color: #166534; }
+        .profit-theme .divider { border-top: 1px solid #bbf7d0; }
+
+        .dump-theme { background: #fef2f2; border-color: #fecaca; }
+        .dump-theme .cat-label { color: #b91c1c; }
+        .dump-theme .tile-icon { background: #fee2e2; color: #b91c1c; }
+        .dump-theme .cat-diff, .dump-theme .sp-val { color: #dc2626; }
+        .dump-theme .sp-char { color: #991b1b; }
+        .dump-theme .divider { border-top: 1px solid #fecaca; }
+
+        .bank-theme { background: #09090b; border-color: #27272a; }
+        .bank-theme .cat-label { color: #e4e4e7; }
+        .bank-theme .tile-icon { background: #27272a; color: #38bdf8; }
+        .bank-theme .cat-diff { color: #38bdf8; font-size: 18px;}
+        .bank-theme .sp-char { color: #71717a; }
+        .bank-theme .sp-val { color: #e4e4e7; }
+        .bank-theme .divider { border-top: 1px solid #27272a; }
+
+        .ops-theme { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); border-color: #3730a3; }
+        .ops-theme .cat-label { color: #e0e7ff; }
+        .ops-theme .tile-icon { background: rgba(255,255,255,0.15); color: #e0e7ff; }
+        .ops-theme .cat-diff { color: #facc15; font-size: 18px;}
+        .ops-theme .sp-char { color: #818cf8; }
+        .ops-theme .sp-val { color: #ffffff; }
+        .ops-theme .divider { border-top: 1px solid rgba(255,255,255,0.15); }
+        .val-green { color: #34d399 !important; }
+        .val-red { color: #f87171 !important; }
+
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; animation: fadeUp 0.2s ease; }
+        .modal-card { background: #fff; width: 90%; max-width: 360px; padding: 24px; border-radius: 24px; text-align: center;}
+        .modal-card h3 { justify-content: center; margin-bottom: 16px; margin-top:0;}
 
         /* Clean Table History Modal */
         #history-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 300; flex-direction: column; animation: slideUp 0.3s ease;}
@@ -89,182 +142,230 @@
         .history-content { flex: 1; overflow-y: auto; padding: 0; background: #fff; }
         
         .history-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .history-table th { 
-            position: sticky; top: 0; background: #f8fafc; color: var(--text-muted); 
-            font-size: 10px; font-weight: 800; padding: 12px 8px; 
-            border-bottom: 1px solid var(--border); text-transform: uppercase; z-index: 10;
-        }
-        
+        .history-table th { position: sticky; top: 0; background: #f8fafc; color: var(--text-muted); font-size: 10px; font-weight: 800; padding: 12px 8px; border-bottom: 1px solid var(--border); text-transform: uppercase; z-index: 10;}
         .history-table th:nth-child(1), .history-table td:nth-child(1) { width: 25%; text-align: left; padding-left: 16px; }
-        .history-table th:nth-child(2), .history-table td:nth-child(2) { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
-        .history-table th:nth-child(3), .history-table td:nth-child(3) { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
-        
+        .history-table th.col-2, .history-table td.col-2 { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
+        .history-table th.col-3, .history-table td.col-3 { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
         .history-table td { padding: 14px 8px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-weight: 700; color: var(--text-dark); }
         .history-table td:first-child { color: var(--text-muted); font-size: 11px; }
-
-        .history-table td.missing-cell { color: var(--g-red); font-weight: 800; }
+        .history-table td.missing-cell { color: var(--g-red); font-weight: 800; text-align: center; font-size: 11px;}
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
-<div class="container">
-    
-    <div id="login-screen">
-        <div style="margin: 0 auto;">
-            <i class="material-icons-round app-logo">storefront</i>
-            <h1 class="app-title" id="login-app-title">Metro Iritty</h1>
-            <p class="app-subtitle">Secure Staff Portal</p>
-        </div>
-        <div class="card">
-            <select id="user-role">
-                <option value="purchase">Purchase Department</option>
-                <option value="hwp">HWP Department</option>
-                <option value="sales">Sales Department</option>
-                <option value="accounts">Accounts Department</option>
-                <option value="dataentry">Data Entry Department</option>
-            </select>
-            <input type="password" id="user-pass" placeholder="Enter PIN / Password">
-            <button class="btn" id="login-btn">Sign In</button>
-        </div>
-    </div>
 
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>Select Branch</h3>
-            <select id="branch-select">
-                <option value="iritty">Metro Iritty</option>
-                <option value="mtr">Metro Mtr</option>
-            </select>
-            <button class="btn" onclick="saveSettings()">Save & Switch</button>
-            <button class="btn" style="background:#f1f5f9; color:#0f172a; margin-top:8px;" onclick="closeSettings()">Cancel</button>
-        </div>
+<div id="login-wrapper" class="login-container">
+    <div style="margin: 0 auto;">
+        <i class="material-icons-round app-logo">storefront</i>
+        <h1 class="app-title" id="login-app-title">Metro Iritty</h1>
+        <p class="app-subtitle">Secure Staff Portal</p>
     </div>
-
-    <!-- Custom Unlock Modal -->
-    <div id="unlock-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>Unlock Edit Mode</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Enter admin password to modify submitted data.</p>
-            <input type="password" id="unlock-pass" placeholder="Enter Password">
-            <p id="unlock-error" style="color:var(--g-red); font-size:11px; display:none; margin-top:-5px; margin-bottom:10px; font-weight:700;">Incorrect Password</p>
-            <button class="btn" id="confirm-unlock-btn" style="background:var(--g-yellow); color:#000;">Unlock Fields</button>
-            <button class="btn" style="background:#f1f5f9; color:#0f172a; margin-top:8px;" onclick="closeUnlockModal()">Cancel</button>
-        </div>
+    <div class="card">
+        <select id="user-role">
+            <option value="admin">Admin Department</option>
+            <option value="purchase">Purchase Department</option>
+            <option value="hwp">HWP Department</option>
+        </select>
+        <input type="password" id="user-pass" placeholder="Enter PIN / Password">
+        <button class="btn" id="login-btn">Sign In</button>
     </div>
+</div>
 
-    <!-- Report Modal -->
-    <div id="report-modal">
-        <div class="report-header">
-            <div>
-                <h2 style="margin:0; font-size:16px; font-weight:800;">Purchase Report</h2>
-                <span id="report-date-label" style="font-size:12px; color:var(--text-muted); font-weight:600;">Syncing...</span>
-            </div>
-            <button class="action-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeReport()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
-        </div>
-        <div class="report-content">
-            <div class="cat-grid">
-                <!-- FOOD -->
-                <div class="cat-card" id="rep-card-f" onclick="openHistory('food', 'FOOD ITEMS')">
-                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge dyn-month">MON</span></div></div>
-                    <div class="cat-diff" id="r_f-diff">₹0</div>
-                    <div class="progress-container"><div id="r_f-bar" class="progress-bar"></div></div>
-                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_f-stock">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_f-limit">0</span></div>
-                    </div>
-                    <div class="cat-stats">
-                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_f-s">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_f-p">0</span></div>
-                    </div>
-                </div>
-                <!-- NON-FOOD -->
-                <div class="cat-card" id="rep-card-nf" onclick="openHistory('nonfood', 'NON-FOOD')">
-                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge dyn-month">MON</span></div></div>
-                    <div class="cat-diff" id="r_nf-diff">₹0</div>
-                    <div class="progress-container"><div id="r_nf-bar" class="progress-bar"></div></div>
-                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_nf-stock">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_nf-limit">0</span></div>
-                    </div>
-                    <div class="cat-stats">
-                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_nf-s">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_nf-p">0</span></div>
-                    </div>
-                </div>
-                <!-- PROMOTER -->
-                <div class="cat-card" id="rep-card-pr" onclick="openHistory('promoter', 'PROMOTERS')">
-                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge dyn-month">MON</span></div></div>
-                    <div class="cat-diff" id="r_pr-diff">₹0</div>
-                    <div class="progress-container"><div id="r_pr-bar" class="progress-bar"></div></div>
-                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_pr-stock">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_pr-limit">0</span></div>
-                    </div>
-                    <div class="cat-stats">
-                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_pr-s">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_pr-p">0</span></div>
-                    </div>
-                </div>
-                <!-- HWP -->
-                <div class="cat-card" id="rep-card-hwp" onclick="openHistory('hwp', 'HWP')">
-                    <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge dyn-month">MON</span></div></div>
-                    <div class="cat-diff" id="r_hwp-diff">₹0</div>
-                    <div class="progress-container"><div id="r_hwp-bar" class="progress-bar"></div></div>
-                    <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                        <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_hwp-stock">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_hwp-limit">0</span></div>
-                    </div>
-                    <div class="cat-stats">
-                        <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_hwp-s">0</span></div>
-                        <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_hwp-p">0</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Select Branch</h3>
+        <select id="branch-select">
+            <option value="iritty">Metro Iritty</option>
+            <option value="mtr">Metro Mtr</option>
+        </select>
+        <button class="btn" onclick="saveSettings()">Save & Switch</button>
+        <button class="btn" style="background:#f1f5f9; color:#0f172a; margin-top:8px;" onclick="closeSettings()">Cancel</button>
     </div>
+</div>
 
-    <!-- History Modal -->
-    <div id="history-modal">
+<!-- Custom Unlock Modal -->
+<div id="unlock-modal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Unlock Edit Mode</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Enter admin password to modify submitted data.</p>
+        <input type="password" id="unlock-pass" placeholder="Enter Password">
+        <p id="unlock-error" style="color:var(--g-red); font-size:11px; display:none; margin-top:-5px; margin-bottom:10px; font-weight:700;">Incorrect Password</p>
+        <button class="btn" id="confirm-unlock-btn" style="background:var(--g-yellow); color:#000;">Unlock Fields</button>
+        <button class="btn" style="background:#f1f5f9; color:#0f172a; margin-top:8px;" onclick="closeUnlockModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div id="history-modal" class="modal-overlay" style="background: var(--bg); align-items:flex-start;">
+    <div style="width:100%; max-width:450px; margin:0 auto; display:flex; flex-direction:column; height:100%;">
         <div class="history-header">
             <div>
                 <h2 id="hist-cat-title" style="margin:0; font-size:16px; font-weight:800;">Category</h2>
                 <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Daily History</span>
             </div>
-            <button class="settings-btn" style="background:#fee2e2; color:#ef4444; border:none; border-radius:8px; width:32px; height:32px; cursor:pointer;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
+            <button class="action-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
         </div>
         <div class="history-content" id="hist-list">
             <!-- Populated by JS -->
         </div>
     </div>
+</div>
 
-    <div id="app-screen">
-        <header>
-            <div class="role-badge"><span id="app-branch-badge">Metro Iritty</span><strong id="display-role">Role</strong></div>
-            <div class="header-actions">
-                <button class="action-btn" id="report-btn" style="background:#e0e7ff; color:#3730a3; display:none;" onclick="openReport()"><i class="material-icons-round" style="font-size:18px;">analytics</i></button>
-                <button class="action-btn" style="background:#f1f5f9; color:#475569;" onclick="openSettings()"><i class="material-icons-round" style="font-size:18px;">settings</i></button>
-                <button class="action-btn" id="logout-btn" style="background:#fee2e2; color:#ef4444;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
-            </div>
-        </header>
-        <div class="date-box">
-            <label>Reporting Date</label>
-            <input type="date" id="entry_date">
+<!-- Main App Wrapper -->
+<div id="app-screen" class="container">
+    
+    <header>
+        <!-- Left Side -->
+        <select id="admin_branch" class="branch-dropdown" style="display:none;">
+            <option value="iritty">Metro Iritty</option>
+            <option value="mtr">Metro Mtr</option>
+        </select>
+        
+        <button class="action-btn" id="back-to-edit-btn" style="display:none; background:#e0e7ff; color:#3730a3; padding: 4px 10px; width:auto; gap:4px;" onclick="toggleDashboard()">
+            <i class="material-icons-round" style="font-size:16px;">edit</i> <span style="font-weight:800; font-size:11px;">EDIT</span>
+        </button>
+
+        <div class="role-badge" id="role-badge-el">
+            <span id="app-branch-badge">Metro Iritty</span><strong id="display-role">Role</strong>
         </div>
+
+        <!-- Right Side -->
+        <div class="header-actions">
+            <span id="sync-status" style="font-size: 10px;"></span>
+            <input type="date" id="entry_date">
+            
+            <button class="action-btn" id="toggle-dashboard-btn" style="display:none; background:#e0e7ff; color:#3730a3;" onclick="toggleDashboard()">
+                <i class="material-icons-round" id="toggle-icon" style="font-size:18px;">analytics</i>
+            </button>
+            <button class="action-btn" style="background:#f1f5f9; color:#475569;" onclick="openSettings()"><i class="material-icons-round" style="font-size:18px;">settings</i></button>
+            <button class="action-btn" id="logout-btn" style="background:#fee2e2; color:#ef4444;"><i class="material-icons-round" style="font-size:18px;">logout</i></button>
+        </div>
+    </header>
+
+    <!-- Form Area -->
+    <div id="form-container">
         <div class="form-card">
             <div id="form-content"></div>
-            <!-- Unlock / Submit Buttons -->
             <button class="btn" id="unlock-btn" style="display:none; background:#f59e0b; margin-top: 12px; color:#000;"><i class="material-icons-round" style="font-size:16px; vertical-align:middle; margin-right:4px;">lock</i> Unlock to Edit</button>
             <button class="btn" id="submit-btn" style="margin-top: 12px;">Submit Data</button>
         </div>
     </div>
+
+    <!-- Dashboard View (For Purchase/HWP Viewers & Admin Toggle) -->
+    <div id="dashboard-container">
+        <div class="cat-grid">
+            <div class="cat-card" id="rep-card-f" onclick="openHistory('food', 'FOOD ITEMS')">
+                <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-f"></div></div>
+                <div class="cat-diff" id="r_f-diff">₹0</div>
+                <div class="progress-container"><div id="r_f-bar" class="progress-bar"></div></div>
+                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_f-stock">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_f-limit">0</span></div>
+                </div>
+                <div class="cat-stats">
+                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_f-s">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_f-p">0</span></div>
+                </div>
+            </div>
+            <div class="cat-card" id="rep-card-nf" onclick="openHistory('nonfood', 'NON-FOOD')">
+                <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-nf"></div></div>
+                <div class="cat-diff" id="r_nf-diff">₹0</div>
+                <div class="progress-container"><div id="r_nf-bar" class="progress-bar"></div></div>
+                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_nf-stock">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_nf-limit">0</span></div>
+                </div>
+                <div class="cat-stats">
+                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_nf-s">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_nf-p">0</span></div>
+                </div>
+            </div>
+            <div class="cat-card" id="rep-card-pr" onclick="openHistory('promoter', 'PROMOTERS')">
+                <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-pr"></div></div>
+                <div class="cat-diff" id="r_pr-diff">₹0</div>
+                <div class="progress-container"><div id="r_pr-bar" class="progress-bar"></div></div>
+                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_pr-stock">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_pr-limit">0</span></div>
+                </div>
+                <div class="cat-stats">
+                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_pr-s">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_pr-p">0</span></div>
+                </div>
+            </div>
+            <div class="cat-card" id="rep-card-hwp" onclick="openHistory('hwp', 'HWP')">
+                <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-hwp"></div></div>
+                <div class="cat-diff" id="r_hwp-diff">₹0</div>
+                <div class="progress-container"><div id="r_hwp-bar" class="progress-bar"></div></div>
+                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_hwp-stock">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_hwp-limit">0</span></div>
+                </div>
+                <div class="cat-stats">
+                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_hwp-s">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_hwp-p">0</span></div>
+                </div>
+            </div>
+            
+            <div class="cat-card profit-theme no-click" id="rep-card-prof" onclick="openHistory('profit_exp', 'PRO v/s EXP')" style="display:none; cursor:pointer;">
+                <div class="card-header">
+                    <div class="cat-title-group"><span class="cat-label" style="color:#15803d">PRO v/s EXP</span><span class="month-badge green dyn-month">MON</span></div>
+                    <div style="display:flex; align-items:center; gap:6px;"><div class="status-dot" id="dot-pv"></div><div class="tile-icon"><i class="material-icons-round">savings</i></div></div>
+                </div>
+                <div class="cat-diff" id="pv-diff">₹0</div>
+                <div class="cat-stats divider">
+                    <div class="stat-item"><span class="sp-char">PROFIT</span><span class="sp-val" id="pv-p">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">EXPENSE</span><span class="sp-val" id="pv-v">0</span></div>
+                </div>
+            </div>
+            <div class="cat-card dump-theme no-click" id="rep-card-dump" onclick="openHistory('fv_dump', 'F&V DUMP')" style="display:none; cursor:pointer;">
+                <div class="card-header">
+                    <div class="cat-title-group"><span class="cat-label" style="color:#b91c1c">F&V DUMP</span><span class="month-badge red dyn-month">MON</span></div>
+                    <div style="display:flex; align-items:center; gap:6px;"><div class="status-dot" id="dot-dump"></div><div class="tile-icon"><i class="material-icons-round">delete_sweep</i></div></div>
+                </div>
+                <div class="cat-diff" id="fv-cumul">₹0</div>
+                <div class="cat-stats divider">
+                    <div class="stat-item"><span class="sp-char">YEST. DUMP</span><span class="sp-val" id="fv-yest">₹0</span></div>
+                </div>
+            </div>
+            <div class="cat-card bank-theme no-click" id="rep-card-bank" style="display:none;">
+                <div class="card-header">
+                    <div class="cat-label">BANK TODAY</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><div class="status-dot" id="dot-b"></div><div class="tile-icon"><i class="material-icons-round">account_balance</i></div></div>
+                </div>
+                <div class="cat-diff" id="b-bal">₹0</div>
+                <div class="cat-stats divider">
+                    <div class="stat-item"><span class="sp-char">ISSUED TODAY</span><span class="sp-val" id="b-iss">₹0</span></div>
+                </div>
+            </div>
+            <div class="cat-card ops-theme no-click" id="rep-card-ops" style="display:none;">
+                <div class="card-header">
+                    <div class="cat-label">YEST. PURCH</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><div class="status-dot" id="dot-o"></div><div class="tile-icon"><i class="material-icons-round">receipt_long</i></div></div>
+                </div>
+                <div class="cat-diff" id="o-tpur">₹0</div>
+                <div class="cat-stats divider">
+                    <div class="stat-item"><span class="sp-char">ENTERED</span><span class="sp-val val-green" id="o-ent">0</span></div>
+                    <div class="stat-item" style="text-align:right"><span class="sp-char">PENDING</span><span class="sp-val val-red" id="o-pen">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Bottom Nav -->
+    <div class="bottom-nav" id="admin-bottom-nav">
+        <div class="nav-item active" onclick="switchAdminTab('purchase', this)"><i class="material-icons-round">shopping_cart</i><span>Purchase</span></div>
+        <div class="nav-item" onclick="switchAdminTab('sales', this)"><i class="material-icons-round">storefront</i><span>Sales</span></div>
+        <div class="nav-item" onclick="switchAdminTab('accounts', this)"><i class="material-icons-round">account_balance</i><span>Accounts</span></div>
+        <div class="nav-item" onclick="switchAdminTab('dataentry', this)"><i class="material-icons-round">snippet_folder</i><span>Ops</span></div>
+    </div>
 </div>
 
-<!-- Firebase SDKs -->
 <script type="module">
-    window.monthDataMap = {}; // Global Map for History table
+    window.monthDataMap = {};
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -281,16 +382,24 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- Branch Settings Logic ---
     let currentBranch = localStorage.getItem('update_branch') || 'iritty';
+    document.getElementById('admin_branch').value = currentBranch;
     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     let existingDocData = {}; 
+    let adminCurrentTab = 'purchase';
+    let isDashboardView = false;
     
     function updateBranchDisplay() {
-        document.getElementById('login-app-title').innerText = currentBranch === 'iritty' ? 'Metro Iritty' : 'Metro Mtr';
-        document.getElementById('app-branch-badge').innerText = currentBranch === 'iritty' ? '📍 Metro Iritty' : '📍 Metro Mtr';
+        document.getElementById('app-branch-badge').innerText = currentBranch === 'iritty' ? 'Metro Iritty' : 'Metro Mtr';
     }
     updateBranchDisplay();
+
+    document.getElementById('admin_branch').addEventListener('change', (e) => {
+        currentBranch = e.target.value;
+        localStorage.setItem('update_branch', currentBranch);
+        if(isDashboardView || currentUser === 'purchase' || currentUser === 'hwp') fetchReportData();
+        else checkExistingData();
+    });
 
     window.openSettings = () => {
         document.getElementById('branch-select').value = currentBranch;
@@ -299,18 +408,18 @@
     window.closeSettings = () => { document.getElementById('settings-modal').style.display = 'none'; }
     window.saveSettings = () => {
         currentBranch = document.getElementById('branch-select').value;
+        document.getElementById('admin_branch').value = currentBranch;
         localStorage.setItem('update_branch', currentBranch);
         updateBranchDisplay();
         closeSettings();
-        checkExistingData(); 
+        if(isDashboardView || currentUser === 'purchase' || currentUser === 'hwp') fetchReportData();
+        else checkExistingData(); 
     }
 
     const ROLES = {
-        purchase: { pass: "pur123", label: "PURCHASE ENTRY", default: 'yest' },
-        hwp: { pass: "hwp111", label: "HWP ENTRY", default: 'yest' },
-        sales: { pass: "sale456", label: "SALES ENTRY", default: 'yest' },
-        accounts: { pass: "acc789", label: "ACCOUNTS ENTRY", default: 'today' },
-        dataentry: { pass: "data000", label: "DATA ENTRY", default: 'today' }
+        admin: { pass: "admin%123", label: "ADMIN" },
+        purchase: { pass: "pur123", label: "PURCHASE" },
+        hwp: { pass: "hwp111", label: "HWP" }
     };
 
     let currentUser = localStorage.getItem('sm_session');
@@ -328,46 +437,117 @@
         localStorage.removeItem('sm_session'); location.reload();
     });
 
-    document.getElementById('entry_date').addEventListener('change', checkExistingData);
+    document.getElementById('entry_date').addEventListener('change', () => {
+        if(isDashboardView || currentUser === 'purchase' || currentUser === 'hwp') fetchReportData();
+        else checkExistingData();
+    });
 
     function loginUser(role) {
         currentUser = role;
-        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('login-wrapper').style.display = 'none';
         document.getElementById('app-screen').style.display = 'flex';
-        document.getElementById('display-role').innerText = role === 'hwp' ? 'HWP' : role;
-        
-        if (role === 'purchase' || role === 'hwp') {
-            document.getElementById('report-btn').style.display = 'flex';
-        }
         
         const dateInput = document.getElementById('entry_date');
         const d = new Date();
-        if(ROLES[role].default === 'yest') d.setDate(d.getDate() - 1);
         
+        if (role === 'admin') {
+            document.getElementById('admin_branch').style.display = 'block';
+            document.getElementById('role-badge-el').style.display = 'none';
+            document.getElementById('admin-bottom-nav').style.display = 'flex';
+            document.getElementById('toggle-dashboard-btn').style.display = 'flex';
+            
+            dateInput.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            
+            document.getElementById('form-container').style.display = 'flex';
+            document.getElementById('dashboard-container').style.display = 'none';
+            switchAdminTab('purchase', document.querySelector('.nav-item.active'));
+            return;
+        }
+        
+        document.getElementById('admin_branch').style.display = 'none';
+        document.getElementById('role-badge-el').style.display = 'flex';
+        document.getElementById('display-role').innerText = role === 'hwp' ? 'HWP' : role;
+        
+        d.setDate(d.getDate() - 1);
         dateInput.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        
-        renderForm(role);
+
+        if (role === 'purchase' || role === 'hwp') {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('dashboard-container').style.display = 'flex';
+            
+            if(role === 'purchase') {
+                document.getElementById('rep-card-hwp').style.display = 'none';
+                document.getElementById('rep-card-f').style.display = 'flex';
+                document.getElementById('rep-card-nf').style.display = 'flex';
+                document.getElementById('rep-card-pr').style.display = 'flex';
+            } else if (role === 'hwp') {
+                document.getElementById('rep-card-f').style.display = 'none';
+                document.getElementById('rep-card-nf').style.display = 'none';
+                document.getElementById('rep-card-pr').style.display = 'none';
+                document.getElementById('rep-card-hwp').style.display = 'flex';
+            }
+            ['prof', 'dump', 'bank', 'ops'].forEach(id => document.getElementById(`rep-card-${id}`).style.display = 'none');
+            fetchReportData();
+        }
+    }
+
+    // Toggle Dashboard for Admin
+    window.toggleDashboard = () => {
+        const branchDrop = document.getElementById('admin_branch');
+        const backBtn = document.getElementById('back-to-edit-btn');
+        const dashBtn = document.getElementById('toggle-dashboard-btn');
+
+        if(isDashboardView) {
+            isDashboardView = false;
+            document.getElementById('dashboard-container').style.display = 'none';
+            document.getElementById('form-container').style.display = 'flex';
+            document.getElementById('admin-bottom-nav').style.display = 'flex';
+            
+            branchDrop.style.display = 'block';
+            backBtn.style.display = 'none';
+            dashBtn.style.display = 'flex';
+            checkExistingData();
+        } else {
+            isDashboardView = true;
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('admin-bottom-nav').style.display = 'none';
+            document.getElementById('dashboard-container').style.display = 'flex';
+            
+            branchDrop.style.display = 'none';
+            backBtn.style.display = 'flex';
+            dashBtn.style.display = 'none';
+            
+            ['f', 'nf', 'pr', 'hwp', 'prof', 'dump', 'bank', 'ops'].forEach(id => document.getElementById(`rep-card-${id}`).style.display = 'flex');
+            fetchReportData();
+        }
+    }
+
+    window.switchAdminTab = (tab, el) => {
+        if(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+        adminCurrentTab = tab;
+        renderForm(tab);
         checkExistingData();
     }
 
-    function renderForm(role) {
-        let html = `<h3 id="form-title">${ROLES[role].label} <span id="status-badge" style="font-size:10px; padding:4px 8px; border-radius:6px; font-weight:800;"></span></h3>`;
-        if(role === 'purchase') {
-            ['Food Items','Non-Food','Promoters'].forEach(cat => {
+    function renderForm(roleToRender) {
+        let html = `<h3 id="form-title">${roleToRender.toUpperCase()} ENTRY <span id="status-badge" style="font-size:10px; padding:4px 8px; border-radius:6px; font-weight:800;"></span></h3>`;
+        if(roleToRender === 'purchase') {
+            ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
                 html += `<div class="input-group"><label>${cat}</label><input type="number" id="p_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
             });
-        } else if (role === 'hwp') {
-            html += `<div class="input-group"><label>HWP</label><input type="number" id="p_hwp" placeholder="0"></div>`;
-        } else if(role === 'sales') {
+        } else if(roleToRender === 'sales') {
             ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
                 html += `<div class="input-group"><label>${cat}</label><input type="number" id="s_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
             });
             html += `<div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#10b981">Overall Profit</label><input type="number" id="s_profit" placeholder="₹0"></div>`;
-        } else if(role === 'accounts') {
+        } else if(roleToRender === 'accounts') {
             html += `<div class="input-group"><label>Bank Balance</label><input type="number" id="acc_bal" placeholder="₹0"></div>
                      <div class="input-group"><label>Issued Amount</label><input type="number" id="acc_iss" placeholder="₹0"></div>
                      <div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#ef4444">Total Expense</label><input type="number" id="acc_voucher" placeholder="₹0"></div>`;
-        } else if(role === 'dataentry') {
+        } else if(roleToRender === 'dataentry') {
             html += `<div class="input-group"><label>Bills Entered</label><input type="number" id="de_ent" placeholder="0"></div>
                      <div class="input-group"><label>Bills Pending</label><input type="number" id="de_pen" placeholder="0"></div>
                      <div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#f59e0b">F&V Dump Amount</label><input type="number" id="de_fvdump" placeholder="₹0"></div>
@@ -376,18 +556,26 @@
         document.getElementById('form-content').innerHTML = html;
     }
 
+    function setDot(id, isValid) {
+        const dot = document.getElementById(id);
+        if (dot) dot.style.backgroundColor = isValid ? 'var(--g-green)' : 'var(--g-red)';
+    }
+
     async function checkExistingData() {
         const dateStr = document.getElementById('entry_date').value;
-        if (!dateStr || !currentUser) return;
+        if (!dateStr || !currentUser || isDashboardView || currentUser === 'purchase' || currentUser === 'hwp') return;
 
         const btn = document.getElementById('submit-btn');
         const unlockBtn = document.getElementById('unlock-btn');
         const badge = document.getElementById('status-badge');
+        const statusEl = document.getElementById('sync-status');
         
         btn.innerText = "Checking..."; btn.disabled = true; badge.innerText = "";
         unlockBtn.style.display = 'none';
+        statusEl.innerText = "Syncing..."; statusEl.style.color = "var(--g-blue)";
 
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
+        const targetRole = currentUser === 'admin' ? adminCurrentTab : currentUser;
 
         try {
             const docRef = doc(db, collectionName, dateStr);
@@ -398,12 +586,10 @@
             existingDocData = docSnap.exists() ? docSnap.data() : {};
 
             if (docSnap.exists()) {
-                let dbKey = currentUser === 'dataentry' ? 'billing' : (currentUser === 'hwp' ? 'purchase' : currentUser);
+                let dbKey = targetRole === 'dataentry' ? 'billing' : targetRole;
                 if (existingDocData[dbKey]) {
-                    if(currentUser === 'hwp') {
-                        if(existingDocData.purchase.hwp !== undefined) { hasData = true; data = existingDocData.purchase; }
-                    } else if (currentUser === 'purchase') {
-                        if(existingDocData.purchase.food !== undefined || existingDocData.purchase.nonfood !== undefined || existingDocData.purchase.promoter !== undefined) {
+                    if (targetRole === 'purchase') {
+                        if(existingDocData.purchase.food !== undefined || existingDocData.purchase.hwp !== undefined) {
                             hasData = true; data = existingDocData.purchase;
                         }
                     } else {
@@ -413,29 +599,26 @@
             }
 
             document.querySelectorAll('#form-content input').forEach(inp => { 
-                inp.value = ''; 
-                inp.classList.remove('locked');
-                inp.readOnly = false;
+                inp.value = ''; inp.classList.remove('locked'); inp.readOnly = false;
             });
 
             if (hasData) {
-                if(currentUser === 'purchase') {
+                if(targetRole === 'purchase') {
                     document.getElementById('p_fooditems').value = data.food || '';
                     document.getElementById('p_nonfood').value = data.nonfood || '';
                     document.getElementById('p_promoters').value = data.promoter || '';
-                } else if (currentUser === 'hwp') {
                     document.getElementById('p_hwp').value = data.hwp || '';
-                } else if(currentUser === 'sales') {
+                } else if(targetRole === 'sales') {
                     document.getElementById('s_fooditems').value = data.food || '';
                     document.getElementById('s_nonfood').value = data.nonfood || '';
                     document.getElementById('s_promoters').value = data.promoter || '';
                     document.getElementById('s_hwp').value = data.hwp || '';
                     document.getElementById('s_profit').value = data.profit || '';
-                } else if(currentUser === 'accounts') {
+                } else if(targetRole === 'accounts') {
                     document.getElementById('acc_bal').value = data.balance || '';
                     document.getElementById('acc_iss').value = data.issued || '';
                     document.getElementById('acc_voucher').value = data.voucher || existingDocData?.sales?.voucher || '';
-                } else if(currentUser === 'dataentry') {
+                } else if(targetRole === 'dataentry') {
                     document.getElementById('de_ent').value = data.entered || '';
                     document.getElementById('de_pen').value = data.pending || '';
                     document.getElementById('de_fvdump').value = data.fvDump || '';
@@ -443,22 +626,19 @@
                 }
                 
                 document.querySelectorAll('#form-content input').forEach(inp => { 
-                    inp.classList.add('locked');
-                    inp.readOnly = true;
+                    inp.classList.add('locked'); inp.readOnly = true;
                 });
 
-                btn.style.display = 'none'; 
-                unlockBtn.style.display = 'block';
-                badge.innerText = "LOCKED"; 
-                badge.style.background = "#e2e8f0"; badge.style.color = "#475569";
+                btn.style.display = 'none'; unlockBtn.style.display = 'block';
+                badge.innerText = "LOCKED"; badge.style.background = "#e2e8f0"; badge.style.color = "#475569";
             } else {
                 btn.style.display = 'block'; btn.innerText = "Submit Data"; btn.disabled = false;
-                badge.innerText = "PENDING ENTRY"; badge.style.background = "#fee2e2"; badge.style.color = "#991b1b";
+                badge.innerText = "PENDING"; badge.style.background = "#fee2e2"; badge.style.color = "#991b1b";
             }
-        } catch (error) { console.error(error); btn.innerText = "Submit Data"; btn.disabled = false; }
+            statusEl.innerText = "";
+        } catch (error) { console.error(error); btn.innerText = "Submit Data"; btn.disabled = false; statusEl.innerText = "Error"; statusEl.style.color = "var(--g-red)"; }
     }
 
-    // --- Unlock Edit Modal Logic ---
     window.closeUnlockModal = () => {
         document.getElementById('unlock-modal').style.display = 'none';
         document.getElementById('unlock-pass').value = '';
@@ -476,21 +656,15 @@
         if (pass === "Edit#213") {
             closeUnlockModal();
             document.querySelectorAll('#form-content input').forEach(inp => { 
-                inp.classList.remove('locked');
-                inp.readOnly = false;
+                inp.classList.remove('locked'); inp.readOnly = false;
             });
             document.getElementById('unlock-btn').style.display = 'none';
             const btn = document.getElementById('submit-btn');
-            btn.style.display = 'block';
-            btn.innerText = "Update Data";
-            btn.disabled = false;
+            btn.style.display = 'block'; btn.innerText = "Update Data"; btn.disabled = false;
             
             const badge = document.getElementById('status-badge');
-            badge.innerText = "EDITING"; 
-            badge.style.background = "#fef08a"; badge.style.color = "#854d0e";
-        } else {
-            document.getElementById('unlock-error').style.display = 'block';
-        }
+            badge.innerText = "EDITING"; badge.style.background = "#fef08a"; badge.style.color = "#854d0e";
+        } else { document.getElementById('unlock-error').style.display = 'block'; }
     });
 
     document.getElementById('submit-btn').addEventListener('click', async () => {
@@ -500,61 +674,43 @@
         const btn = document.getElementById('submit-btn');
         btn.innerText = "Saving..."; btn.disabled = true;
 
+        const targetRole = currentUser === 'admin' ? adminCurrentTab : currentUser;
         let payload = { date: dateStr }; 
         let existingPurchase = existingDocData.purchase || {};
         
-        if(currentUser === 'purchase') {
-            payload.purchase = { ...existingPurchase, food: Number(document.getElementById('p_fooditems').value), nonfood: Number(document.getElementById('p_nonfood').value), promoter: Number(document.getElementById('p_promoters').value) };
-        } else if(currentUser === 'hwp') {
-            payload.purchase = { ...existingPurchase, hwp: Number(document.getElementById('p_hwp').value) };
-        } else if(currentUser === 'sales') {
+        if(targetRole === 'purchase') {
+            payload.purchase = { ...existingPurchase, food: Number(document.getElementById('p_fooditems').value), nonfood: Number(document.getElementById('p_nonfood').value), promoter: Number(document.getElementById('p_promoters').value), hwp: Number(document.getElementById('p_hwp').value) };
+        } else if(targetRole === 'sales') {
             payload.sales = { food: Number(document.getElementById('s_fooditems').value), nonfood: Number(document.getElementById('s_nonfood').value), promoter: Number(document.getElementById('s_promoters').value), hwp: Number(document.getElementById('s_hwp').value), profit: Number(document.getElementById('s_profit').value) };
-        } else if(currentUser === 'accounts') {
+        } else if(targetRole === 'accounts') {
             payload.accounts = { balance: Number(document.getElementById('acc_bal').value), issued: Number(document.getElementById('acc_iss').value), voucher: Number(document.getElementById('acc_voucher').value) };
-        } else if(currentUser === 'dataentry') {
+        } else if(targetRole === 'dataentry') {
             payload.billing = { entered: Number(document.getElementById('de_ent').value), pending: Number(document.getElementById('de_pen').value), fvDump: Number(document.getElementById('de_fvdump').value), totalPur: Number(document.getElementById('de_total_pur').value) };
         }
 
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
         try {
             await setDoc(doc(db, collectionName, dateStr), payload, { merge: true });
-            alert('Data Successfully Saved to Cloud!');
+            alert('Data Successfully Saved!');
             checkExistingData(); 
-        } catch (e) {
-            console.error(e); alert("Error saving data."); btn.innerText = "Submit Data"; btn.disabled = false;
-        }
+        } catch (e) { console.error(e); alert("Error saving data."); btn.innerText = "Submit Data"; btn.disabled = false; }
     });
 
-    // --- REPORT LOGIC ---
-    window.openReport = () => {
-        document.getElementById('report-modal').style.display = 'flex';
-        if(currentUser === 'purchase') {
-            document.getElementById('rep-card-hwp').style.display = 'none';
-            document.getElementById('rep-card-f').style.display = 'flex';
-            document.getElementById('rep-card-nf').style.display = 'flex';
-            document.getElementById('rep-card-pr').style.display = 'flex';
-        } else if (currentUser === 'hwp') {
-            document.getElementById('rep-card-f').style.display = 'none';
-            document.getElementById('rep-card-nf').style.display = 'none';
-            document.getElementById('rep-card-pr').style.display = 'none';
-            document.getElementById('rep-card-hwp').style.display = 'flex';
-        }
-        fetchReportData();
-    }
-    window.closeReport = () => { document.getElementById('report-modal').style.display = 'none'; }
-
+    // --- DASHBOARD REPORT SYNC ---
     async function fetchReportData() {
-        const dateStr = document.getElementById('entry_date').value;
+        const dateStr = document.getElementById('entry_date').value; 
         if (!dateStr) return;
+        
+        const statusEl = document.getElementById('sync-status');
+        statusEl.innerText = "Syncing..."; statusEl.style.color = "var(--g-blue)";
         
         const selectedDate = new Date(dateStr);
         document.querySelectorAll('.dyn-month').forEach(badge => { badge.innerText = monthNames[selectedDate.getMonth()]; });
         
         const monthStartStr = dateStr.substring(0, 8) + '01';
-        document.getElementById('report-date-label').innerText = `Till ${dateStr.split('-').reverse().join('/')}`;
         
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
-        window.monthDataMap = {}; 
+        window.monthDataMap = {};
 
         try {
             const setSnap = await getDoc(doc(db, "branch_settings", currentBranch));
@@ -564,19 +720,23 @@
 
             const q = query(collection(db, collectionName), where("date", ">=", queryStart), where("date", "<=", dateStr));
             const snapshot = await getDocs(q);
-            let sum = { f_s:0, f_p:0, nf_s:0, nf_p:0, pr_s:0, pr_p:0, hwp_s:0, hwp_p:0 };
+            let sum = { f_s:0, f_p:0, nf_s:0, nf_p:0, pr_s:0, pr_p:0, hwp_s:0, hwp_p:0, profit:0, voucher:0, fv_dump:0 };
             let stockDiff = { f:0, nf:0, pr:0, hwp:0 };
+            let dToday = {}, dYest = {};
 
             snapshot.forEach(doc => {
                 let data = doc.data();
                 
                 if(data.date >= monthStartStr) {
-                    window.monthDataMap[data.date] = data; // For history
+                    window.monthDataMap[data.date] = data;
                     
                     sum.f_s += Number(data.sales?.food || 0); sum.f_p += Number(data.purchase?.food || 0);
                     sum.nf_s += Number(data.sales?.nonfood || 0); sum.nf_p += Number(data.purchase?.nonfood || 0);
                     sum.pr_s += Number(data.sales?.promoter || 0); sum.pr_p += Number(data.purchase?.promoter || 0);
                     sum.hwp_s += Number(data.sales?.hwp || 0); sum.hwp_p += Number(data.purchase?.hwp || 0);
+                    sum.profit += Number(data.sales?.profit || 0); 
+                    sum.voucher += Number(data.accounts?.voucher || data.sales?.voucher || 0);
+                    sum.fv_dump += Number(data.billing?.fvDump || 0);
                 }
 
                 if(data.date >= osDateStr) {
@@ -585,22 +745,68 @@
                     stockDiff.pr += Number(data.purchase?.promoter || 0) - Number(data.sales?.promoter || 0);
                     stockDiff.hwp += Number(data.purchase?.hwp || 0) - Number(data.sales?.hwp || 0);
                 }
+
+                if(data.date === dateStr) dToday = data;
             });
+
+            const yestDate = new Date(dateStr); yestDate.setDate(yestDate.getDate() - 1);
+            const yyyy = yestDate.getFullYear(); const mm = String(yestDate.getMonth() + 1).padStart(2, '0'); const dd = String(yestDate.getDate()).padStart(2, '0');
+            const yesterdayStr = `${yyyy}-${mm}-${dd}`;
+            dYest = window.monthDataMap[yesterdayStr] || {};
 
             updateReportTile('r_f', sum.f_s, sum.f_p, sets.f_o, sets.f_l, stockDiff.f);
             updateReportTile('r_nf', sum.nf_s, sum.nf_p, sets.nf_o, sets.nf_l, stockDiff.nf);
             updateReportTile('r_pr', sum.pr_s, sum.pr_p, sets.pr_o, sets.pr_l, stockDiff.pr);
             updateReportTile('r_hwp', sum.hwp_s, sum.hwp_p, sets.hwp_o, sets.hwp_l, stockDiff.hwp);
-        } catch (e) { console.error(e); }
+
+            if(currentUser === 'admin') {
+                document.getElementById(`pv-p`).innerText = formatAmt(sum.profit);
+                document.getElementById(`pv-v`).innerText = formatAmt(sum.voucher);
+                const pvDiff = sum.profit - sum.voucher;
+                const pvDiffEl = document.getElementById(`pv-diff`);
+                if(pvDiffEl) {
+                    pvDiffEl.innerText = (pvDiff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(pvDiff));
+                    pvDiffEl.style.color = pvDiff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+                }
+                
+                document.getElementById('fv-cumul').innerText = '₹' + formatAmt(sum.fv_dump);
+                document.getElementById('fv-yest').innerText = '₹' + formatAmt(dYest.billing?.fvDump || 0);
+                document.getElementById('b-bal').innerText = '₹' + formatAmt(dToday.accounts?.balance || 0);
+                document.getElementById('b-iss').innerText = '₹' + formatAmt(dToday.accounts?.issued || 0);
+                document.getElementById('o-tpur').innerText = '₹' + formatAmt(dYest.billing?.totalPur || 0);
+                document.getElementById('o-ent').innerText = dYest.billing?.entered || '0';
+                document.getElementById('o-pen').innerText = dYest.billing?.pending || '0';
+                
+                // Dots Logic (Robust Check)
+            const hasPurch = dYest && dYest.purchase;
+            const hasSale = dYest && dYest.sales;
+            const hasBill = dYest && dYest.billing;
+            const hasAcc = dToday && dToday.accounts;
+
+            setDot('dot-f', hasPurch && 'food' in dYest.purchase && hasSale && 'food' in dYest.sales);
+            setDot('dot-nf', hasPurch && 'nonfood' in dYest.purchase && hasSale && 'nonfood' in dYest.sales);
+            setDot('dot-pr', hasPurch && 'promoter' in dYest.purchase && hasSale && 'promoter' in dYest.sales);
+            setDot('dot-hwp', hasPurch && 'hwp' in dYest.purchase && hasSale && 'hwp' in dYest.sales);
+            setDot('dot-pv', hasSale && 'profit' in dYest.sales);
+            setDot('dot-dump', hasBill && 'fvDump' in dYest.billing);
+            setDot('dot-b', hasAcc && 'balance' in dToday.accounts);
+            setDot('dot-o', hasBill && 'totalPur' in dYest.billing);
+            }
+
+            statusEl.innerText = "";
+        } catch (e) { console.error(e); statusEl.innerText = "Error"; statusEl.style.color = "var(--g-red)";}
     }
 
     function updateReportTile(id, s, p, open, limit, stockAccumulatedDiff) {
         document.getElementById(`${id}-s`).innerText = formatAmt(s);
         document.getElementById(`${id}-p`).innerText = formatAmt(p);
-        const diff = s - p;
+        
+        const diff = (s || 0) - (p || 0);
         const diffEl = document.getElementById(`${id}-diff`);
-        diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(diff));
-        diffEl.style.color = diff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+        if(diffEl) {
+            diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(diff));
+            diffEl.style.color = diff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+        }
 
         const bar = document.getElementById(`${id}-bar`);
         let pct = p > 0 ? (s / p) * 100 : (s > 0 ? 100 : 0);
@@ -609,11 +815,13 @@
 
         const stock = (open || 0) + stockAccumulatedDiff;
         const stockEl = document.getElementById(`${id}-stock`);
-        document.getElementById(`${id}-limit`).innerText = formatAmt(limit || 0);
-        stockEl.innerText = formatAmt(stock);
-        if(stock < (limit || 0)) { stockEl.style.color = 'var(--g-green)'; } 
-        else if (stock > (limit || 0)) { stockEl.style.color = 'var(--g-red)'; } 
-        else { stockEl.style.color = 'var(--text-muted)'; }
+        if(stockEl) {
+            document.getElementById(`${id}-limit`).innerText = formatAmt(limit || 0);
+            stockEl.innerText = formatAmt(stock);
+            if(stock < (limit || 0)) { stockEl.style.color = 'var(--g-green)'; } 
+            else if (stock > (limit || 0)) { stockEl.style.color = 'var(--g-red)'; } 
+            else { stockEl.style.color = 'var(--text-muted)'; }
+        }
     }
 
     function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
@@ -622,29 +830,43 @@
     window.openHistory = (catKey, catName) => {
         document.getElementById('hist-cat-title').innerText = catName;
         const container = document.getElementById('hist-list');
-        
         const selectedStr = document.getElementById('entry_date').value;
         const [yy, mm, dd] = selectedStr.split('-');
         const loopEnd = parseInt(dd) - 1; 
-        
-        let html = `
-            <table class="history-table">
-                <thead><tr><th>Date</th><th>Sale</th><th>Purch</th></tr></thead>
-                <tbody>
-        `;
-        
-        for(let i = 1; i <= loopEnd; i++) {
+
+        let isProf = catKey === 'profit_exp';
+        let isDump = catKey === 'fv_dump';
+        let col2 = isProf ? 'PROFIT' : (isDump ? 'DUMP' : 'SALE');
+        let col3 = isProf ? 'EXPENSE' : 'PURCH';
+
+        let html = `<table class="history-table"><thead><tr><th>Date</th><th class="col-2">${col2}</th>`;
+        if(!isDump) html += `<th class="col-3">${col3}</th>`;
+        html += `</tr></thead><tbody>`;
+
+        for(let i = loopEnd; i >= 1; i--) {
             let checkDate = `${yy}-${mm}-${String(i).padStart(2, '0')}`;
             let dayData = window.monthDataMap[checkDate];
             let displayDate = `${String(i).padStart(2, '0')} ${monthNames[parseInt(mm)-1]}`;
-            
-            let s = dayData?.sales?.[catKey];
-            let p = dayData?.purchase?.[catKey];
 
-            if (s === undefined && p === undefined) {
-                html += `<tr><td>${displayDate}</td><td class="missing-cell">-</td><td class="missing-cell">-</td></tr>`;
+            let s, p;
+            if(isProf) { s = dayData?.sales?.profit; p = dayData?.accounts?.voucher || dayData?.sales?.voucher; } 
+            else if (isDump) { s = dayData?.billing?.fvDump; } 
+            else { s = dayData?.sales?.[catKey]; p = dayData?.purchase?.[catKey]; }
+
+            if (s === undefined && p === undefined && !isDump) {
+                 html += `<tr><td>${displayDate}</td><td class="missing-cell">-</td><td class="missing-cell">-</td></tr>`;
+            } else if (isDump && s === undefined) {
+                 html += `<tr><td>${displayDate}</td><td class="missing-cell" colspan="1">-</td></tr>`; 
             } else {
-                html += `<tr><td>${displayDate}</td><td>${formatAmt(s)}</td><td>${formatAmt(p)}</td></tr>`;
+                let tintStyle = "";
+                if(isProf || !isDump) {
+                    let diff = (s || 0) - (p || 0);
+                    if (diff < 0) tintStyle = "style='background-color: #fef2f2;'";
+                    else if (diff > 0) tintStyle = "style='background-color: #f0fdf4;'";
+                }
+                html += `<tr ${tintStyle}><td>${displayDate}</td><td class="col-2">${formatAmt(s)}</td>`;
+                if(!isDump) html += `<td class="col-3">${formatAmt(p)}</td>`;
+                html += `</tr>`;
             }
         }
         
@@ -652,7 +874,6 @@
         container.innerHTML = html;
         document.getElementById('history-modal').style.display = 'flex';
     }
-    
     window.closeHistory = () => { document.getElementById('history-modal').style.display = 'none'; }
 </script>
 

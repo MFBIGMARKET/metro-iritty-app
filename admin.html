@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#f8fafc">
     <link rel="apple-touch-icon" href="admin-192.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root { 
@@ -45,7 +45,11 @@
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
         .cat-title-group { display: flex; align-items: center; gap: 6px; }
-        .cat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        
+        .cat-label { font-size: 11px; font-weight: 900; color: #000000; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-muted); box-shadow: 0 0 4px rgba(0,0,0,0.1); flex-shrink: 0; margin-top: 4px;}
+
         .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
         .month-badge.green { background: #dcfce7; color: #166534; }
         .month-badge.red { background: #fee2e2; color: #991b1b; }
@@ -65,6 +69,7 @@
         .divider { padding-top: 4px; margin-top: auto; }
 
         .profit-theme { background: #f0fdf4; border-color: #bbf7d0; }
+        .profit-theme .cat-label { color: #15803d; }
         .profit-theme .tile-icon { background: #dcfce7; color: #15803d; }
         .profit-theme .cat-diff { color: #15803d; }
         .profit-theme .sp-char { color: #166534; }
@@ -72,6 +77,7 @@
         .profit-theme .divider { border-top: 1px solid #bbf7d0; }
 
         .dump-theme { background: #fef2f2; border-color: #fecaca; }
+        .dump-theme .cat-label { color: #b91c1c; }
         .dump-theme .tile-icon { background: #fee2e2; color: #b91c1c; }
         .dump-theme .cat-diff { color: #dc2626; }
         .dump-theme .sp-char { color: #991b1b; }
@@ -79,7 +85,7 @@
         .dump-theme .divider { border-top: 1px solid #fecaca; }
 
         .bank-theme { background: #09090b; border-color: #27272a; }
-        .bank-theme .cat-label { color: #a1a1aa; }
+        .bank-theme .cat-label { color: #e4e4e7; }
         .bank-theme .tile-icon { background: #27272a; color: #38bdf8; }
         .bank-theme .cat-diff { color: #38bdf8; font-size: 18px;}
         .bank-theme .sp-char { color: #71717a; }
@@ -87,7 +93,7 @@
         .bank-theme .divider { border-top: 1px solid #27272a; }
 
         .ops-theme { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); border-color: #3730a3; }
-        .ops-theme .cat-label { color: #a5b4fc; }
+        .ops-theme .cat-label { color: #e0e7ff; }
         .ops-theme .tile-icon { background: rgba(255,255,255,0.15); color: #e0e7ff; }
         .ops-theme .cat-diff { color: #facc15; font-size: 18px;}
         .ops-theme .sp-char { color: #818cf8; }
@@ -117,21 +123,14 @@
         .history-content { flex: 1; overflow-y: auto; padding: 0; background: #fff; }
         
         .history-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .history-table th { 
-            position: sticky; top: 0; background: #f8fafc; color: var(--text-muted); 
-            font-size: 10px; font-weight: 800; padding: 12px 8px; 
-            border-bottom: 1px solid var(--border); text-transform: uppercase; z-index: 10;
-        }
-        
-        /* Column Sizing and Borders */
+        .history-table th { position: sticky; top: 0; background: #f8fafc; color: var(--text-muted); font-size: 10px; font-weight: 800; padding: 12px 8px; border-bottom: 1px solid var(--border); text-transform: uppercase; z-index: 10;}
         .history-table th:nth-child(1), .history-table td:nth-child(1) { width: 25%; text-align: left; padding-left: 16px; }
-        .history-table th:nth-child(2), .history-table td:nth-child(2) { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
-        .history-table th:nth-child(3), .history-table td:nth-child(3) { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
+        .history-table th.col-2, .history-table td.col-2 { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
+        .history-table th.col-3, .history-table td.col-3 { width: 37.5%; text-align: center; border-left: 1px solid var(--border); }
         
         .history-table td { padding: 14px 8px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-weight: 700; color: var(--text-dark); }
         .history-table td:first-child { color: var(--text-muted); font-size: 11px; }
 
-        /* Missing Entry Styling */
         .history-table td.missing-cell { color: var(--g-red); font-weight: 800; }
 
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -155,7 +154,7 @@
     <div class="cat-grid">
         <!-- 1. FOOD -->
         <div class="cat-card" onclick="openHistory('food', 'FOOD ITEMS')">
-            <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge">MON</span></div></div>
+            <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge">MON</span></div> <div class="status-dot" id="dot-f"></div></div>
             <div class="cat-diff" id="f-diff">₹0</div>
             <div class="progress-container"><div id="f-bar" class="progress-bar"></div></div>
             <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
@@ -170,7 +169,7 @@
         
         <!-- 2. NON-FOOD -->
         <div class="cat-card" onclick="openHistory('nonfood', 'NON-FOOD')">
-            <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge">MON</span></div></div>
+            <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge">MON</span></div> <div class="status-dot" id="dot-nf"></div></div>
             <div class="cat-diff" id="nf-diff">₹0</div>
             <div class="progress-container"><div id="nf-bar" class="progress-bar"></div></div>
             <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
@@ -185,7 +184,7 @@
 
         <!-- 3. PROMOTERS -->
         <div class="cat-card" onclick="openHistory('promoter', 'PROMOTERS')">
-            <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge">MON</span></div></div>
+            <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge">MON</span></div> <div class="status-dot" id="dot-pr"></div></div>
             <div class="cat-diff" id="pr-diff">₹0</div>
             <div class="progress-container"><div id="pr-bar" class="progress-bar"></div></div>
             <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
@@ -200,7 +199,7 @@
 
         <!-- 4. HWP -->
         <div class="cat-card" onclick="openHistory('hwp', 'HWP')">
-            <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge">MON</span></div></div>
+            <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge">MON</span></div> <div class="status-dot" id="dot-hwp"></div></div>
             <div class="cat-diff" id="hwp-diff">₹0</div>
             <div class="progress-container"><div id="hwp-bar" class="progress-bar"></div></div>
             <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
@@ -213,9 +212,15 @@
             </div>
         </div>
 
-        <!-- 5. PROFIT VS VOUCHER -->
-        <div class="cat-card profit-theme no-click">
-            <div class="card-header"><div class="cat-title-group"><span class="cat-label" style="color:#15803d">PRO v/s EXP</span><span class="month-badge green">MON</span></div><div class="tile-icon"><i class="material-icons-round">savings</i></div></div>
+        <!-- 5. PROFIT VS EXPENSE -->
+        <div class="cat-card profit-theme" onclick="openHistory('profit_exp', 'PRO v/s EXP')">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label">PRO v/s EXP</span><span class="month-badge green">MON</span></div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="status-dot" id="dot-pv"></div>
+                    <div class="tile-icon"><i class="material-icons-round">savings</i></div>
+                </div>
+            </div>
             <div class="cat-diff" id="pv-diff">₹0</div>
             <div class="cat-stats divider">
                 <div class="stat-item"><span class="sp-char">PROFIT</span><span class="sp-val" id="pv-p">0</span></div>
@@ -224,8 +229,14 @@
         </div>
 
         <!-- 6. F&V DUMP -->
-        <div class="cat-card dump-theme no-click">
-            <div class="card-header"><div class="cat-title-group"><span class="cat-label" style="color:#b91c1c">F&V DUMP</span><span class="month-badge red">MON</span></div><div class="tile-icon"><i class="material-icons-round">delete_sweep</i></div></div>
+        <div class="cat-card dump-theme" onclick="openHistory('fv_dump', 'F&V DUMP')">
+            <div class="card-header">
+                <div class="cat-title-group"><span class="cat-label">F&V DUMP</span><span class="month-badge red">MON</span></div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="status-dot" id="dot-dump"></div>
+                    <div class="tile-icon"><i class="material-icons-round">delete_sweep</i></div>
+                </div>
+            </div>
             <div class="cat-diff" id="fv-cumul">₹0</div>
             <div class="cat-stats divider">
                 <div class="stat-item"><span class="sp-char">YEST. DUMP</span><span class="sp-val" id="fv-yest">₹0</span></div>
@@ -234,7 +245,13 @@
 
         <!-- 7. BANK SQUARE -->
         <div class="cat-card bank-theme no-click">
-            <div class="card-header"><div class="cat-label">BANK TODAY</div><div class="tile-icon"><i class="material-icons-round">account_balance</i></div></div>
+            <div class="card-header">
+                <div class="cat-label">BANK TODAY</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="status-dot" id="dot-b"></div>
+                    <div class="tile-icon"><i class="material-icons-round">account_balance</i></div>
+                </div>
+            </div>
             <div class="cat-diff" id="b-bal">₹0</div>
             <div class="cat-stats divider">
                 <div class="stat-item"><span class="sp-char">ISSUED TODAY</span><span class="sp-val" id="b-iss">₹0</span></div>
@@ -243,7 +260,13 @@
 
         <!-- 8. OPS SQUARE -->
         <div class="cat-card ops-theme no-click">
-            <div class="card-header"><div class="cat-label">YEST. PURCH</div><div class="tile-icon"><i class="material-icons-round">receipt_long</i></div></div>
+            <div class="card-header">
+                <div class="cat-label">YEST. PURCH</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="status-dot" id="dot-o"></div>
+                    <div class="tile-icon"><i class="material-icons-round">receipt_long</i></div>
+                </div>
+            </div>
             <div class="cat-diff" id="o-tpur">₹0</div>
             <div class="cat-stats divider">
                 <div class="stat-item"><span class="sp-char">ENTERED</span><span class="sp-val val-green" id="o-ent">0</span></div>
@@ -283,16 +306,18 @@
 </div>
 
 <!-- History Modal -->
-<div id="history-modal">
-    <div class="history-header">
-        <div>
-            <h2 id="hist-cat-title" style="margin:0; font-size:16px; font-weight:800;">Category</h2>
-            <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Daily History</span>
+<div id="history-modal" class="modal-overlay" style="background: var(--bg); display: none; align-items:flex-start;">
+    <div style="width:100%; max-width:100%; display:flex; flex-direction:column; height:100%;">
+        <div class="history-header">
+            <div>
+                <h2 id="hist-cat-title" style="margin:0; font-size:16px; font-weight:800;">Category</h2>
+                <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Daily History</span>
+            </div>
+            <button class="settings-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
         </div>
-        <button class="settings-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
-    </div>
-    <div class="history-content" id="hist-list">
-        <!-- Populated by JS -->
+        <div class="history-content" id="hist-list" style="flex: 1; overflow-y: auto; background: #fff; padding:0;">
+            <!-- Populated by JS -->
+        </div>
     </div>
 </div>
 
@@ -329,7 +354,6 @@
     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     datePicker.addEventListener('change', fetchAndRender);
 
-    // Settings
     window.openSettings = async () => {
         document.getElementById('settings-modal').style.display = 'flex';
         document.getElementById('cfg_os_date').value = currentSettings.os_date || datePicker.value.substring(0, 8) + '01';
@@ -349,6 +373,11 @@
         };
         try { await setDoc(doc(db, "branch_settings", currentBranch), newSettings, { merge: true }); closeSettings(); fetchAndRender(); } 
         catch (e) { alert("Error saving settings."); console.error(e); }
+    }
+
+    function setDot(id, isValid) {
+        const dot = document.getElementById(id);
+        if (dot) dot.style.backgroundColor = isValid ? 'var(--g-green)' : 'var(--g-red)';
     }
 
     async function fetchAndRender() {
@@ -371,7 +400,6 @@
             currentSettings = setSnap.exists() ? setSnap.data() : { os_date: monthStartStr, f_o:0, f_l:0, nf_o:0, nf_l:0, pr_o:0, pr_l:0, hwp_o:0, hwp_l:0 };
             const osDateStr = currentSettings.os_date || monthStartStr;
             
-            // Fetch from whichever is earlier: 1st of month or Opening Stock Date
             const queryStart = (osDateStr < monthStartStr) ? osDateStr : monthStartStr;
 
             const q = query(collection(db, collectionName), where("date", ">=", queryStart), where("date", "<=", selectedStr));
@@ -384,7 +412,6 @@
             snapshot.forEach(doc => {
                 let data = doc.data();
                 
-                // ONLY add to history map if it's within the CURRENT viewing month
                 if(data.date >= monthStartStr) {
                     window.monthDataMap[data.date] = data;
                     
@@ -397,7 +424,6 @@
                     sum.fv_dump += Number(data.billing?.fvDump || 0);
                 }
 
-                // STOCK LOGIC: Accumulate difference ONLY if date is >= Effective Stock Date
                 if(data.date >= osDateStr) {
                     stockDiff.f += Number(data.purchase?.food || 0) - Number(data.sales?.food || 0);
                     stockDiff.nf += Number(data.purchase?.nonfood || 0) - Number(data.sales?.nonfood || 0);
@@ -423,11 +449,27 @@
             document.getElementById('fv-cumul').innerText = '₹' + formatAmt(sum.fv_dump);
             document.getElementById('fv-yest').innerText = '₹' + formatAmt(dYest.billing?.fvDump || 0);
 
-            document.getElementById('b-bal').innerText = '₹' + formatAmt(dToday.accounts?.balance);
-            document.getElementById('b-iss').innerText = '₹' + formatAmt(dToday.accounts?.issued);
-            document.getElementById('o-tpur').innerText = '₹' + formatAmt(dYest.billing?.totalPur);
+            document.getElementById('b-bal').innerText = '₹' + formatAmt(dToday.accounts?.balance || 0);
+            document.getElementById('b-iss').innerText = '₹' + formatAmt(dToday.accounts?.issued || 0);
+            document.getElementById('o-tpur').innerText = '₹' + formatAmt(dYest.billing?.totalPur || 0);
             document.getElementById('o-ent').innerText = dYest.billing?.entered || '0';
             document.getElementById('o-pen').innerText = dYest.billing?.pending || '0';
+
+            // Dots Logic
+            // Dots Logic (Robust Check)
+            const hasPurch = dYest && dYest.purchase;
+            const hasSale = dYest && dYest.sales;
+            const hasBill = dYest && dYest.billing;
+            const hasAcc = dToday && dToday.accounts;
+
+            setDot('dot-f', hasPurch && 'food' in dYest.purchase && hasSale && 'food' in dYest.sales);
+            setDot('dot-nf', hasPurch && 'nonfood' in dYest.purchase && hasSale && 'nonfood' in dYest.sales);
+            setDot('dot-pr', hasPurch && 'promoter' in dYest.purchase && hasSale && 'promoter' in dYest.sales);
+            setDot('dot-hwp', hasPurch && 'hwp' in dYest.purchase && hasSale && 'hwp' in dYest.sales);
+            setDot('dot-pv', hasSale && 'profit' in dYest.sales);
+            setDot('dot-dump', hasBill && 'fvDump' in dYest.billing);
+            setDot('dot-b', hasAcc && 'balance' in dToday.accounts);
+            setDot('dot-o', hasBill && 'totalPur' in dYest.billing);
 
             statusEl.innerText = "";
         } catch (e) { console.error(e); statusEl.innerText = "Error"; statusEl.style.color = "var(--g-red)"; }
@@ -447,7 +489,6 @@
         bar.style.width = Math.min(pct, 100) + '%';
         bar.style.backgroundColor = s >= p ? 'var(--g-green)' : 'var(--g-red)';
 
-        // New Stock Calculation
         const stock = (open || 0) + stockAccumulatedDiff;
         const stockEl = document.getElementById(`${id}-stock`);
         document.getElementById(`${id}-limit`).innerText = formatAmt(limit || 0);
@@ -460,63 +501,55 @@
 
     function formatAmt(val) { return Number(val || 0).toLocaleString('en-IN'); }
 
-    // History Logic (Reverse Order & Color Tints)
+    // History Logic
     window.openHistory = (catKey, catName) => {
         document.getElementById('hist-cat-title').innerText = catName;
         const container = document.getElementById('hist-list');
-        
-        const selectedStr = datePicker.value; // Note: if updating update.html, this is document.getElementById('entry_date').value
+        const selectedStr = datePicker.value;
         const [yy, mm, dd] = selectedStr.split('-');
-        
         const loopEnd = parseInt(dd) - 1; 
-        
-        let html = `
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Sale</th>
-                        <th>Purch</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        // REVERSED LOOP: Starts from yesterday (loopEnd) and goes down to 1
+
+        let isProf = catKey === 'profit_exp';
+        let isDump = catKey === 'fv_dump';
+
+        let col2 = isProf ? 'PROFIT' : (isDump ? 'DUMP' : 'SALE');
+        let col3 = isProf ? 'EXPENSE' : 'PURCH';
+
+        let html = `<table class="history-table"><thead><tr><th>Date</th><th class="col-2">${col2}</th>`;
+        if(!isDump) html += `<th class="col-3">${col3}</th>`;
+        html += `</tr></thead><tbody>`;
+
         for(let i = loopEnd; i >= 1; i--) {
             let checkDate = `${yy}-${mm}-${String(i).padStart(2, '0')}`;
             let dayData = window.monthDataMap[checkDate];
             let displayDate = `${String(i).padStart(2, '0')} ${monthNames[parseInt(mm)-1]}`;
-            
-            let s = dayData?.sales?.[catKey];
-            let p = dayData?.purchase?.[catKey];
 
-            if (s === undefined && p === undefined) {
-                html += `
-                    <tr>
-                        <td>${displayDate}</td>
-                        <td class="missing-cell">-</td>
-                        <td class="missing-cell">-</td>
-                    </tr>
-                `;
+            let s, p;
+            if(isProf) {
+                s = dayData?.sales?.profit;
+                p = dayData?.accounts?.voucher || dayData?.sales?.voucher;
+            } else if (isDump) {
+                s = dayData?.billing?.fvDump;
             } else {
-                // TINT LOGIC
+                s = dayData?.sales?.[catKey];
+                p = dayData?.purchase?.[catKey];
+            }
+
+            if (s === undefined && p === undefined && !isDump) {
+                 html += `<tr><td>${displayDate}</td><td class="missing-cell">-</td><td class="missing-cell">-</td></tr>`;
+            } else if (isDump && s === undefined) {
+                 html += `<tr><td>${displayDate}</td><td class="missing-cell" colspan="1">-</td></tr>`; 
+            } else {
                 let tintStyle = "";
-                let diff = (s || 0) - (p || 0);
-                
-                if (diff < 0) {
-                    tintStyle = "style='background-color: #fef2f2;'"; // Soft Red 
-                } else if (diff > 0) {
-                    tintStyle = "style='background-color: #f0fdf4;'"; // Soft Green 
+                if(isProf || !isDump) {
+                    let diff = (s || 0) - (p || 0);
+                    if (diff < 0) tintStyle = "style='background-color: #fef2f2;'";
+                    else if (diff > 0) tintStyle = "style='background-color: #f0fdf4;'";
                 }
                 
-                html += `
-                    <tr ${tintStyle}>
-                        <td>${displayDate}</td>
-                        <td>${formatAmt(s)}</td>
-                        <td>${formatAmt(p)}</td>
-                    </tr>
-                `;
+                html += `<tr ${tintStyle}><td>${displayDate}</td><td class="col-2">${formatAmt(s)}</td>`;
+                if(!isDump) html += `<td class="col-3">${formatAmt(p)}</td>`;
+                html += `</tr>`;
             }
         }
         
