@@ -81,12 +81,13 @@
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
         .cat-title-group { display: flex; align-items: center; gap: 6px; }
         .cat-label { font-size: 11px; font-weight: 900; color: #000000; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-muted); box-shadow: 0 0 4px rgba(0,0,0,0.1); flex-shrink: 0; margin-top: 4px;}
         .month-badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
         .month-badge.green { background: #dcfce7; color: #166534; }
         .month-badge.red { background: #fee2e2; color: #991b1b; }
         
-        .cat-diff { font-size: 16px; font-weight: 800; margin: 2px 0 0 0; letter-spacing: -0.5px; }
+        .cat-diff { font-size: 16px; font-weight: 800; margin: 4px 0 0 0; letter-spacing: -0.5px; }
         .progress-container { height: 2px; background: #f1f5f9; border-radius: 1px; margin: 4px 0; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; border-radius: 1px; transition: width 0.8s ease; }
         
@@ -96,7 +97,6 @@
         .sp-val { font-size: 11px; font-weight: 800; color: #000000; letter-spacing: -0.5px; white-space: nowrap; }
 
         .tile-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .tile-icon i { font-size: 16px; }
         .divider { padding-top: 4px; margin-top: auto; }
 
         .profit-theme { background: #f0fdf4; border-color: #bbf7d0; }
@@ -138,7 +138,7 @@
 
         /* Clean Table History Modal */
         #history-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 300; flex-direction: column; animation: slideUp 0.3s ease;}
-        .history-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #fff; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); z-index: 20;}
+        .history-header { display: flex; flex-direction: column; align-items: stretch; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); z-index: 20;}
         .history-content { flex: 1; overflow-y: auto; padding: 0; background: #fff; }
         
         .history-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -202,11 +202,16 @@
 <div id="history-modal" class="modal-overlay" style="background: var(--bg); align-items:flex-start;">
     <div style="width:100%; max-width:450px; margin:0 auto; display:flex; flex-direction:column; height:100%;">
         <div class="history-header">
-            <div>
-                <h2 id="hist-cat-title" style="margin:0; font-size:16px; font-weight:800;">Category</h2>
-                <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Daily History</span>
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <h2 id="hist-cat-title" style="margin:0; font-size:16px; font-weight:800;">Category</h2>
+                    <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Daily History</span>
+                </div>
+                <button class="action-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
             </div>
-            <button class="action-btn" style="background:#fee2e2; color:#ef4444;" onclick="closeHistory()"><i class="material-icons-round" style="font-size:20px;">close</i></button>
+            <div id="hist-totals-row" style="display:flex; justify-content: space-between; background: #f8fafc; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border);">
+                <!-- Dynamic Totals -->
+            </div>
         </div>
         <div class="history-content" id="hist-list">
             <!-- Populated by JS -->
@@ -261,52 +266,36 @@
                 <div class="card-header"><div class="cat-title-group"><span class="cat-label">FOOD</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-f"></div></div>
                 <div class="cat-diff" id="r_f-diff">₹0</div>
                 <div class="progress-container"><div id="r_f-bar" class="progress-bar"></div></div>
-                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_f-stock">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_f-limit">0</span></div>
-                </div>
-                <div class="cat-stats">
-                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_f-s">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_f-p">0</span></div>
+                <div class="cat-stats" style="margin-top: auto; align-items: flex-end;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_f-stock" style="font-size: 14px;">0</span></div>
+                    <div class="stat-item" style="text-align: right;"><span class="sp-char">MARGIN</span><span id="r_f-margin" style="font-size: 18px; font-weight: 900; line-height: 1; letter-spacing: -0.5px;">0%</span></div>
                 </div>
             </div>
             <div class="cat-card" id="rep-card-nf" onclick="openHistory('nonfood', 'NON-FOOD')">
                 <div class="card-header"><div class="cat-title-group"><span class="cat-label">NON-FOOD</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-nf"></div></div>
                 <div class="cat-diff" id="r_nf-diff">₹0</div>
                 <div class="progress-container"><div id="r_nf-bar" class="progress-bar"></div></div>
-                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_nf-stock">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_nf-limit">0</span></div>
-                </div>
-                <div class="cat-stats">
-                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_nf-s">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_nf-p">0</span></div>
+                <div class="cat-stats" style="margin-top: auto; align-items: flex-end;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_nf-stock" style="font-size: 14px;">0</span></div>
+                    <div class="stat-item" style="text-align: right;"><span class="sp-char">MARGIN</span><span id="r_nf-margin" style="font-size: 18px; font-weight: 900; line-height: 1; letter-spacing: -0.5px;">0%</span></div>
                 </div>
             </div>
             <div class="cat-card" id="rep-card-pr" onclick="openHistory('promoter', 'PROMOTERS')">
                 <div class="card-header"><div class="cat-title-group"><span class="cat-label">PROMOTER</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-pr"></div></div>
                 <div class="cat-diff" id="r_pr-diff">₹0</div>
                 <div class="progress-container"><div id="r_pr-bar" class="progress-bar"></div></div>
-                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_pr-stock">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_pr-limit">0</span></div>
-                </div>
-                <div class="cat-stats">
-                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_pr-s">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_pr-p">0</span></div>
+                <div class="cat-stats" style="margin-top: auto; align-items: flex-end;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_pr-stock" style="font-size: 14px;">0</span></div>
+                    <div class="stat-item" style="text-align: right;"><span class="sp-char">MARGIN</span><span id="r_pr-margin" style="font-size: 18px; font-weight: 900; line-height: 1; letter-spacing: -0.5px;">0%</span></div>
                 </div>
             </div>
             <div class="cat-card" id="rep-card-hwp" onclick="openHistory('hwp', 'HWP')">
                 <div class="card-header"><div class="cat-title-group"><span class="cat-label">HWP</span><span class="month-badge dyn-month">MON</span></div> <div class="status-dot" id="dot-hwp"></div></div>
                 <div class="cat-diff" id="r_hwp-diff">₹0</div>
                 <div class="progress-container"><div id="r_hwp-bar" class="progress-bar"></div></div>
-                <div class="cat-stats" style="margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
-                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_hwp-stock">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">LIMIT</span><span class="sp-val" id="r_hwp-limit">0</span></div>
-                </div>
-                <div class="cat-stats">
-                    <div class="stat-item"><span class="sp-char">SALE</span><span class="sp-val" id="r_hwp-s">0</span></div>
-                    <div class="stat-item" style="text-align:right"><span class="sp-char">PURCH</span><span class="sp-val" id="r_hwp-p">0</span></div>
+                <div class="cat-stats" style="margin-top: auto; align-items: flex-end;">
+                    <div class="stat-item"><span class="sp-char">STOCK</span><span class="sp-val" id="r_hwp-stock" style="font-size: 14px;">0</span></div>
+                    <div class="stat-item" style="text-align: right;"><span class="sp-char">MARGIN</span><span id="r_hwp-margin" style="font-size: 18px; font-weight: 900; line-height: 1; letter-spacing: -0.5px;">0%</span></div>
                 </div>
             </div>
             
@@ -366,6 +355,7 @@
 
 <script type="module">
     window.monthDataMap = {};
+    window.categoryTotals = {};
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -536,11 +526,15 @@
         let html = `<h3 id="form-title">${roleToRender.toUpperCase()} ENTRY <span id="status-badge" style="font-size:10px; padding:4px 8px; border-radius:6px; font-weight:800;"></span></h3>`;
         if(roleToRender === 'purchase') {
             ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
-                html += `<div class="input-group"><label>${cat}</label><input type="number" id="p_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
+                html += `<div class="input-group"><label>${cat}</label><input type="number" id="p_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="₹0"></div>`;
             });
         } else if(roleToRender === 'sales') {
             ['Food Items','Non-Food','Promoters','HWP'].forEach(cat => {
-                html += `<div class="input-group"><label>${cat}</label><input type="number" id="s_${cat.toLowerCase().replace(/[^a-z]/g, '')}" placeholder="0"></div>`;
+                let idPart = cat.toLowerCase().replace(/[^a-z]/g, '');
+                html += `<div class="input-group" style="display:flex; gap:8px;">
+                            <div style="flex:2;"><label>${cat} Sale</label><input type="number" id="s_${idPart}" placeholder="₹0"></div>
+                            <div style="flex:1;"><label>Margin %</label><input type="number" id="m_${idPart}" placeholder="%" step="0.01"></div>
+                         </div>`;
             });
             html += `<div class="input-group" style="margin-top:16px; border-top:2px dashed var(--border); padding-top:12px;"><label style="color:#10b981">Overall Profit</label><input type="number" id="s_profit" placeholder="₹0"></div>`;
         } else if(roleToRender === 'accounts') {
@@ -610,9 +604,13 @@
                     document.getElementById('p_hwp').value = data.hwp || '';
                 } else if(targetRole === 'sales') {
                     document.getElementById('s_fooditems').value = data.food || '';
+                    document.getElementById('m_fooditems').value = data.food_margin || '';
                     document.getElementById('s_nonfood').value = data.nonfood || '';
+                    document.getElementById('m_nonfood').value = data.nonfood_margin || '';
                     document.getElementById('s_promoters').value = data.promoter || '';
+                    document.getElementById('m_promoters').value = data.promoter_margin || '';
                     document.getElementById('s_hwp').value = data.hwp || '';
+                    document.getElementById('m_hwp').value = data.hwp_margin || '';
                     document.getElementById('s_profit').value = data.profit || '';
                 } else if(targetRole === 'accounts') {
                     document.getElementById('acc_bal').value = data.balance || '';
@@ -681,7 +679,17 @@
         if(targetRole === 'purchase') {
             payload.purchase = { ...existingPurchase, food: Number(document.getElementById('p_fooditems').value), nonfood: Number(document.getElementById('p_nonfood').value), promoter: Number(document.getElementById('p_promoters').value), hwp: Number(document.getElementById('p_hwp').value) };
         } else if(targetRole === 'sales') {
-            payload.sales = { food: Number(document.getElementById('s_fooditems').value), nonfood: Number(document.getElementById('s_nonfood').value), promoter: Number(document.getElementById('s_promoters').value), hwp: Number(document.getElementById('s_hwp').value), profit: Number(document.getElementById('s_profit').value) };
+            payload.sales = { 
+                food: Number(document.getElementById('s_fooditems').value), 
+                food_margin: Number(document.getElementById('m_fooditems').value),
+                nonfood: Number(document.getElementById('s_nonfood').value), 
+                nonfood_margin: Number(document.getElementById('m_nonfood').value),
+                promoter: Number(document.getElementById('s_promoters').value), 
+                promoter_margin: Number(document.getElementById('m_promoters').value),
+                hwp: Number(document.getElementById('s_hwp').value), 
+                hwp_margin: Number(document.getElementById('m_hwp').value),
+                profit: Number(document.getElementById('s_profit').value) 
+            };
         } else if(targetRole === 'accounts') {
             payload.accounts = { balance: Number(document.getElementById('acc_bal').value), issued: Number(document.getElementById('acc_iss').value), voucher: Number(document.getElementById('acc_voucher').value) };
         } else if(targetRole === 'dataentry') {
@@ -711,6 +719,7 @@
         
         const collectionName = currentBranch === 'iritty' ? 'daily_records' : 'daily_records_mtr';
         window.monthDataMap = {};
+        window.categoryTotals = {};
 
         try {
             const setSnap = await getDoc(doc(db, "branch_settings", currentBranch));
@@ -754,10 +763,32 @@
             const yesterdayStr = `${yyyy}-${mm}-${dd}`;
             dYest = window.monthDataMap[yesterdayStr] || {};
 
-            updateReportTile('r_f', sum.f_s, sum.f_p, sets.f_o, sets.f_l, stockDiff.f);
-            updateReportTile('r_nf', sum.nf_s, sum.nf_p, sets.nf_o, sets.nf_l, stockDiff.nf);
-            updateReportTile('r_pr', sum.pr_s, sum.pr_p, sets.pr_o, sets.pr_l, stockDiff.pr);
-            updateReportTile('r_hwp', sum.hwp_s, sum.hwp_p, sets.hwp_o, sets.hwp_l, stockDiff.hwp);
+            let latestMargin = { f: 0, nf: 0, pr: 0, hwp: 0 };
+            const [syy, smm, sdd] = dateStr.split('-');
+            for (let i = parseInt(sdd); i >= 1; i--) {
+                let checkDate = `${syy}-${smm}-${String(i).padStart(2, '0')}`;
+                let d = window.monthDataMap[checkDate];
+                if (d && d.sales) {
+                    if (latestMargin.f === 0 && d.sales.food_margin !== undefined) latestMargin.f = d.sales.food_margin;
+                    if (latestMargin.nf === 0 && d.sales.nonfood_margin !== undefined) latestMargin.nf = d.sales.nonfood_margin;
+                    if (latestMargin.pr === 0 && d.sales.promoter_margin !== undefined) latestMargin.pr = d.sales.promoter_margin;
+                    if (latestMargin.hwp === 0 && d.sales.hwp_margin !== undefined) latestMargin.hwp = d.sales.hwp_margin;
+                }
+            }
+
+            window.categoryTotals = {
+                food: { s: sum.f_s, p: sum.f_p },
+                nonfood: { s: sum.nf_s, p: sum.nf_p },
+                promoter: { s: sum.pr_s, p: sum.pr_p },
+                hwp: { s: sum.hwp_s, p: sum.hwp_p },
+                profit_exp: { s: sum.profit, p: sum.voucher },
+                fv_dump: { s: sum.fv_dump, p: 0 }
+            };
+
+            updateReportTile('r_f', sum.f_s, sum.f_p, sets.f_o, sets.f_l, stockDiff.f, latestMargin.f);
+            updateReportTile('r_nf', sum.nf_s, sum.nf_p, sets.nf_o, sets.nf_l, stockDiff.nf, latestMargin.nf);
+            updateReportTile('r_pr', sum.pr_s, sum.pr_p, sets.pr_o, sets.pr_l, stockDiff.pr, latestMargin.pr);
+            updateReportTile('r_hwp', sum.hwp_s, sum.hwp_p, sets.hwp_o, sets.hwp_l, stockDiff.hwp, latestMargin.hwp);
 
             if(currentUser === 'admin') {
                 document.getElementById(`pv-p`).innerText = formatAmt(sum.profit);
@@ -777,7 +808,6 @@
                 document.getElementById('o-ent').innerText = dYest.billing?.entered || '0';
                 document.getElementById('o-pen').innerText = dYest.billing?.pending || '0';
                 
-                // Dots Logic (Robust Check)
             const hasPurch = dYest && dYest.purchase;
             const hasSale = dYest && dYest.sales;
             const hasBill = dYest && dYest.billing;
@@ -797,30 +827,35 @@
         } catch (e) { console.error(e); statusEl.innerText = "Error"; statusEl.style.color = "var(--g-red)";}
     }
 
-    function updateReportTile(id, s, p, open, limit, stockAccumulatedDiff) {
-        document.getElementById(`${id}-s`).innerText = formatAmt(s);
-        document.getElementById(`${id}-p`).innerText = formatAmt(p);
-        
+    function updateReportTile(id, s, p, open, limit, stockAccumulatedDiff, margin) {
         const diff = (s || 0) - (p || 0);
         const diffEl = document.getElementById(`${id}-diff`);
         if(diffEl) {
             diffEl.innerText = (diff >= 0 ? '+' : '-') + '₹' + formatAmt(Math.abs(diff));
-            diffEl.style.color = diff >= 0 ? 'var(--g-green)' : 'var(--g-red)';
+            // Turns red if Purchase exceeds 95% of Sale
+            diffEl.style.color = p > (0.95 * s) ? 'var(--g-red)' : 'var(--g-green)';
+        }
+
+        const marginEl = document.getElementById(`${id}-margin`);
+        if(marginEl) {
+            marginEl.innerText = (margin || 0) + '%';
+            if (margin < 10) marginEl.style.color = 'var(--g-red)';
+            else if (margin <= 15) marginEl.style.color = 'var(--g-yellow)';
+            else marginEl.style.color = 'var(--g-green)';
         }
 
         const bar = document.getElementById(`${id}-bar`);
         let pct = p > 0 ? (s / p) * 100 : (s > 0 ? 100 : 0);
         bar.style.width = Math.min(pct, 100) + '%';
-        bar.style.backgroundColor = s >= p ? 'var(--g-green)' : 'var(--g-red)';
+        // Progress bar color based on 95% rule
+        bar.style.backgroundColor = p > (0.95 * s) ? 'var(--g-red)' : 'var(--g-green)';
 
         const stock = (open || 0) + stockAccumulatedDiff;
         const stockEl = document.getElementById(`${id}-stock`);
         if(stockEl) {
-            document.getElementById(`${id}-limit`).innerText = formatAmt(limit || 0);
             stockEl.innerText = formatAmt(stock);
-            if(stock < (limit || 0)) { stockEl.style.color = 'var(--g-green)'; } 
-            else if (stock > (limit || 0)) { stockEl.style.color = 'var(--g-red)'; } 
-            else { stockEl.style.color = 'var(--text-muted)'; }
+            if(stock <= (limit || 0)) { stockEl.style.color = 'var(--g-green)'; } 
+            else { stockEl.style.color = 'var(--g-red)'; } 
         }
     }
 
@@ -829,13 +864,44 @@
     // --- History Logic ---
     window.openHistory = (catKey, catName) => {
         document.getElementById('hist-cat-title').innerText = catName;
-        const container = document.getElementById('hist-list');
         const selectedStr = document.getElementById('entry_date').value;
         const [yy, mm, dd] = selectedStr.split('-');
         const loopEnd = parseInt(dd) - 1; 
 
         let isProf = catKey === 'profit_exp';
         let isDump = catKey === 'fv_dump';
+        
+        let totals = window.categoryTotals[catKey] || {s:0, p:0};
+        let headerRow = document.getElementById('hist-totals-row');
+        
+        if(isDump) {
+            headerRow.innerHTML = `
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size:9px; color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">TOTAL DUMP</span>
+                    <span style="font-size:16px; font-weight:900; color:var(--text-dark);">${formatAmt(totals.s)}</span>
+                </div>`;
+        } else if (isProf) {
+            headerRow.innerHTML = `
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size:9px; color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">TOTAL PROFIT</span>
+                    <span style="font-size:16px; font-weight:900; color:var(--text-dark);">${formatAmt(totals.s)}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; text-align:right;">
+                    <span style="font-size:9px; color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">TOTAL EXPENSE</span>
+                    <span style="font-size:16px; font-weight:900; color:var(--text-dark);">${formatAmt(totals.p)}</span>
+                </div>`;
+        } else {
+             headerRow.innerHTML = `
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size:9px; color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">TOTAL SALE</span>
+                    <span style="font-size:16px; font-weight:900; color:var(--text-dark);">${formatAmt(totals.s)}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; text-align:right;">
+                    <span style="font-size:9px; color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">TOTAL PURCH</span>
+                    <span style="font-size:16px; font-weight:900; color:var(--text-dark);">${formatAmt(totals.p)}</span>
+                </div>`;
+        }
+
         let col2 = isProf ? 'PROFIT' : (isDump ? 'DUMP' : 'SALE');
         let col3 = isProf ? 'EXPENSE' : 'PURCH';
 
@@ -871,6 +937,7 @@
         }
         
         html += `</tbody></table>`;
+        const container = document.getElementById('hist-list');
         container.innerHTML = html;
         document.getElementById('history-modal').style.display = 'flex';
     }
